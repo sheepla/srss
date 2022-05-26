@@ -43,33 +43,6 @@ func initApp() cli.App {
 		// 	},
 		// },
 		Commands: []*cli.Command{
-			//{
-			//	Name:    "get",
-			//	Aliases: []string{"g"},
-			//	Usage:   "Get feeds",
-			//	Action: func(ctx *cli.Context) error {
-			//		url := ctx.Args().Get(0)
-			//		fmt.Println(ctx.NArg())
-			//		if url == "" {
-			//			return errors.New("Must require url")
-			//		}
-			//		feed, err := fetchFeed(url)
-			//		for _, v := range feed.Items {
-			//			fmt.Printf("-----------------------\n%s\n-----------------------\n\n%s\n%s\n",
-			//				v.Title,
-			//				v.Description,
-			//				v.Content,
-			//			)
-			//		}
-			//		return err
-			//	},
-			//	ArgsUsage: "[URL]",
-			//},
-			// {
-			// 	Name:    "tui",
-			// 	Aliases: []string{"t"},
-			// 	Usage:   "Show terminal-based UI",
-			// },
 			{
 				Name:    "open",
 				Aliases: []string{"o"},
@@ -107,7 +80,7 @@ func initApp() cli.App {
 			},
 			{
 				Name:    "add",
-				Aliases: []string{"o"},
+				Aliases: []string{"a"},
 				Usage:   "Add url entry",
 				Action: func(ctx *cli.Context) error {
 					url := ctx.Args().Get(0)
@@ -159,26 +132,6 @@ func readURLsFromEntry() ([]string, error) {
 	}
 	return urls, nil
 }
-
-// func findFeed(feeds []gofeed.Feed) ([]int, error) {
-// 	return fuzzyfinder.FindMulti(
-// 		feeds,
-// 		func(i int) string {
-// 			return feeds[i].Title
-// 		},
-// 		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
-// 			if i == -1 {
-// 				return ""
-// 			}
-// 			return fmt.Sprintf(
-// 				"%s\n\n%s\n\n%s\n",
-// 				feeds[i].Title,
-// 				feeds[i].Link,
-// 				feeds[i].Description,
-// 			)
-// 		}),
-// 	)
-// }
 
 func findItem(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
