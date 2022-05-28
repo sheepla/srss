@@ -34,8 +34,8 @@ func main() {
 	}
 }
 
-func initApp() cli.App {
-	return cli.App{
+func initApp() *cli.App {
+	return &cli.App{
 		Name:                 appName,
 		Version:              appVersion,
 		Usage:                appUsage,
