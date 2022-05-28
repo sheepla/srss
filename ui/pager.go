@@ -127,9 +127,8 @@ func NewPager(item *gofeed.Item) (*tea.Program, error) {
 
 func renderContent(item *gofeed.Item) string {
 	return fmt.Sprintf(
-		`%s
-%s %s
-
+		`%s %s %s
+──────
 %s
 %s
 ──────
@@ -140,7 +139,7 @@ func renderContent(item *gofeed.Item) string {
 		sprintfIfNotBlank("updated at %s", item.Updated),
 		sprintfIfNotBlank("%s", item.Description),
 		sprintfIfNotBlank("%s", item.Content),
-		strings.Join(item.Links, "\n"),
+		sprintfIfNotBlank("%s", strings.Join(item.Links, "\n")),
 	)
 }
 

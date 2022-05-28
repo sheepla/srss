@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/kirsle/configdir"
+	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
 	"github.com/sheepla/srrs/ui"
 	"github.com/toqueteos/webbrowser"
@@ -123,8 +124,8 @@ func initApp() *cli.App {
 				},
 			},
 			{
-				Name:    "read",
-				Aliases: []string{"r"},
+				Name:    "tui",
+				Aliases: []string{"t"},
 				Usage:   "View feed items with built-in pager",
 				Action: func(ctx *cli.Context) error {
 					urls, err := readURLsFromEntry()
@@ -145,16 +146,22 @@ func initApp() *cli.App {
 						items = append(items, feeds[i].Items...)
 					}
 
-					idx, err := ui.FindItem(items)
-					if err != nil {
-						return err
-					}
-					pager, err := ui.NewPager(items[idx])
-					if err != nil {
-						return err
-					}
+					for {
+						idx, err := ui.FindItem(items)
+						if err != nil {
+							if errors.Is(fuzzyfinder.ErrAbort, err) {
+								return errors.New("quit")
+							}
+						}
+						pager, err := ui.NewPager(items[idx])
+						if err != nil {
+							return fmt.Errorf("Failed to create pager: %w", err)
+						}
 
-					return pager.Start()
+						if err := pager.Start(); err != nil {
+							return fmt.Errorf("an error occured on pager: %w", err)
+						}
+					}
 				},
 			},
 		},
