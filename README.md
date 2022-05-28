@@ -81,7 +81,7 @@ Welcome any bug reports, requests, typo fixes, etc.
 
 ## LICENSE
 
-MIT
+[MIT](./LICENSE)
 
 ## Author
 
