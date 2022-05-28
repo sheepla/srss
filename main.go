@@ -28,6 +28,10 @@ var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
 // var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
 
+func init() {
+	configdir.MakePath(filepath.Dir(urlFile))
+}
+
 func main() {
 	app := initApp()
 	if err := app.Run(os.Args); err != nil {
@@ -189,12 +193,6 @@ func isUniqueURL(url string) bool {
 }
 
 func addURLEntry(url string) error {
-	dir := filepath.Dir(urlFile)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err = os.MkdirAll(dir, 0o755); err != nil {
-			return fmt.Errorf("failed to create directory (%s): %w", dir, err)
-		}
-	}
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
 		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
