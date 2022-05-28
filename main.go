@@ -13,6 +13,7 @@ import (
 	"github.com/kirsle/configdir"
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
+	"github.com/sheepla/srrs/ui"
 	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
 )
@@ -71,7 +72,7 @@ func initApp() *cli.App {
 						items = append(items, feeds[i].Items...)
 					}
 
-					choises, err := findItem(items)
+					choises, err := ui.FindItemMulti(items)
 					if err != nil {
 						return err
 					}
@@ -120,6 +121,47 @@ func initApp() *cli.App {
 						return errors.New("requires editor name")
 					}
 					return execEditor(editor, urlFile)
+				},
+			},
+			{
+				Name:    "tui",
+				Aliases: []string{"t"},
+				Usage:   "View feed items with built-in pager",
+				Action: func(ctx *cli.Context) error {
+					urls, err := readURLsFromEntry()
+					if err != nil {
+						return err
+					}
+					var feeds []gofeed.Feed
+					for _, v := range urls {
+						f, err := fetchFeed(v)
+						if err != nil {
+							return err
+						}
+						feeds = append(feeds, *f)
+					}
+
+					var items []*gofeed.Item
+					for i := 0; i < len(feeds); i++ {
+						items = append(items, feeds[i].Items...)
+					}
+
+					for {
+						idx, err := ui.FindItem(items)
+						if err != nil {
+							if errors.Is(fuzzyfinder.ErrAbort, err) {
+								return errors.New("quit")
+							}
+						}
+						pager, err := ui.NewPager(items[idx])
+						if err != nil {
+							return fmt.Errorf("Failed to create pager: %w", err)
+						}
+
+						if err := pager.Start(); err != nil {
+							return fmt.Errorf("an error occured on pager: %w", err)
+						}
+					}
 				},
 			},
 		},
@@ -178,26 +220,6 @@ func readURLsFromEntry() ([]string, error) {
 func isValidURL(u string) bool {
 	_, err := url.Parse(u)
 	return err == nil
-}
-
-func findItem(items []*gofeed.Item) ([]int, error) {
-	return fuzzyfinder.FindMulti(
-		items,
-		func(i int) string {
-			return items[i].Title
-		},
-		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
-			if i == -1 {
-				return ""
-			}
-			return fmt.Sprintf(
-				"%s\n\n%s\n\n%s\n",
-				items[i].Title,
-				items[i].Description,
-				items[i].Content,
-			)
-		}),
-	)
 }
 
 func openURL(url string) error {
