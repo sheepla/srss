@@ -8,6 +8,22 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
+func bodyFromItem(item *gofeed.Item) string {
+	var author string
+	if item.Author != nil {
+		author = fmt.Sprintf("  by %s\n", item.Author.Name)
+	}
+
+	return fmt.Sprintf(
+		"■ %s\n\n%s  published at %s, updated at %s\n\n%s\n",
+		item.Title,
+		author,
+		item.Published,
+		item.Updated,
+		item.Description,
+	)
+}
+
 func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
 		items,
@@ -18,15 +34,7 @@ func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 			if i == -1 {
 				return ""
 			}
-			s := fmt.Sprintf(
-				"■ %s\n\n  by %s\n  published at %s, updated at %s\n\n%s\n",
-				items[i].Title,
-				items[i].Author.Name,
-				items[i].Published,
-				items[i].Updated,
-				items[i].Description,
-			)
-			return runewidth.Wrap(s, width/2-5)
+			return runewidth.Wrap(bodyFromItem(items[i]), width/2-5)
 		}),
 	)
 }
@@ -41,15 +49,7 @@ func FindItem(items []*gofeed.Item) (int, error) {
 			if i == -1 {
 				return ""
 			}
-			s := fmt.Sprintf(
-				"■ %s\n\n  by %s\n  published at %s, updated at %s\n\n%s\n",
-				items[i].Title,
-				items[i].Author.Name,
-				items[i].Published,
-				items[i].Updated,
-				items[i].Description,
-			)
-			return runewidth.Wrap(s, width/2-5)
+			return runewidth.Wrap(bodyFromItem(items[i]), width/2-5)
 		}),
 	)
 }
