@@ -1,4 +1,4 @@
-module github.com/sheepla/srrs
+module github.com/sheepla/srss
 
 go 1.18
 

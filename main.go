@@ -13,7 +13,7 @@ import (
 	"github.com/kirsle/configdir"
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
-	"github.com/sheepla/srrs/ui"
+	"github.com/sheepla/srss/ui"
 	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
 )
