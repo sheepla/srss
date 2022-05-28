@@ -2,8 +2,11 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"net/url"
 	"os"
+	"os/exec"
 	"path"
 
 	"github.com/kirsle/configdir"
@@ -13,8 +16,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	appName = "srss"
+var (
+	appName    = "srss"
+	appVersion = "unknown"
+	appUsage   = "A simple command line RSS feed reader"
 )
 
 var urlFile = path.Join(configdir.LocalConfig(), appName, "urls.txt")
@@ -30,18 +35,17 @@ func main() {
 
 func initApp() cli.App {
 	return cli.App{
-		Name:  "srss",
-		Usage: "A simple command line RSS feed reader",
+		Name:                 appName,
+		Version:              appVersion,
+		Usage:                appUsage,
+		Suggest:              false,
+		EnableBashCompletion: true,
 		Action: func(ctx *cli.Context) error {
+			if ctx.NArg() == 0 {
+				return errors.New("Must require arguments")
+			}
 			return nil
 		},
-		// Flags: []cli.Flag{
-		// 	&cli.BoolFlag{
-		// 		Name:    "version",
-		// 		Aliases: []string{"V", "v"},
-		// 		Usage:   "Show version",
-		// 	},
-		// },
 		Commands: []*cli.Command{
 			{
 				Name:    "open",
@@ -83,15 +87,37 @@ func initApp() cli.App {
 				Aliases: []string{"a"},
 				Usage:   "Add url entry",
 				Action: func(ctx *cli.Context) error {
+					if ctx.NArg() != 1 {
+						return errors.New("Requires URL as an argument")
+					}
 					url := ctx.Args().Get(0)
+					if !isValidURL(url) {
+						return fmt.Errorf("Invalid URL (%s)", url)
+					}
 					return addURLEntry(url)
 				},
 			},
-			// {
-			// 	Name:    "edit",
-			// 	Aliases: []string{"o"},
-			// 	Usage:   "Edit URL resource file",
-			// },
+			{
+				Name:    "edit",
+				Aliases: []string{"e"},
+				Usage:   "Edit URL entry file",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "editor",
+						Aliases: []string{"e"},
+						Usage:   "Editor command to edit URL entry file",
+						Value:   "vim",
+						EnvVars: []string{"EDITOR"},
+					},
+				},
+				Action: func(ctx *cli.Context) error {
+					editor := ctx.String("editor")
+					if editor == "" {
+						return errors.New("Requires editor name")
+					}
+					return execEditor(editor, urlFile)
+				},
+			},
 		},
 	}
 }
@@ -133,6 +159,11 @@ func readURLsFromEntry() ([]string, error) {
 	return urls, nil
 }
 
+func isValidURL(u string) bool {
+	_, err := url.Parse(u)
+	return err == nil
+}
+
 func findItem(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
 		items,
@@ -158,4 +189,12 @@ func openURL(url string) error {
 		return fmt.Errorf("Failed to open the URL (%s): %w", url, err)
 	}
 	return nil
+}
+
+// https://doloopwhile.hatenablog.com/entry/2014/08/05/213819
+func execEditor(editor string, args ...string) error {
+	cmd := exec.Command(editor, args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	return cmd.Run()
 }
