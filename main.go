@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/kirsle/configdir"
 	"github.com/ktr0731/go-fuzzyfinder"
@@ -94,6 +95,9 @@ func initApp() cli.App {
 					if !isValidURL(url) {
 						return fmt.Errorf("invalid URL (%s)", url)
 					}
+					if !isUniqueURL(url) {
+						return fmt.Errorf("the URL is already registered: %s", url)
+					}
 					return addURLEntry(url)
 				},
 			},
@@ -111,7 +115,7 @@ func initApp() cli.App {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					editor := ctx.String("editor")
+					editor := strings.TrimSpace(ctx.String("editor"))
 					if editor == "" {
 						return errors.New("requires editor name")
 					}
@@ -128,6 +132,18 @@ func fetchFeed(url string) (*gofeed.Feed, error) {
 		return nil, fmt.Errorf("failed to fetch or parse feed at %s: %w", url, err)
 	}
 	return feed, nil
+}
+
+func isUniqueURL(url string) bool {
+	file, _ := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
+	defer file.Close()
+	s := bufio.NewScanner(file)
+	for s.Scan() {
+		if strings.TrimSpace(s.Text()) == url {
+			return false
+		}
+	}
+	return true
 }
 
 func addURLEntry(url string) error {
@@ -147,7 +163,7 @@ func readURLsFromEntry() ([]string, error) {
 	var urls []string
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
+		return nil, fmt.Errorf("Failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	s := bufio.NewScanner(file)
 	for s.Scan() {
