@@ -42,7 +42,7 @@ func initApp() cli.App {
 		EnableBashCompletion: true,
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
-				return errors.New("Must require arguments")
+				return errors.New("must require arguments")
 			}
 			return nil
 		},
@@ -88,11 +88,11 @@ func initApp() cli.App {
 				Usage:   "Add url entry",
 				Action: func(ctx *cli.Context) error {
 					if ctx.NArg() != 1 {
-						return errors.New("Requires URL as an argument")
+						return errors.New("requires URL as an argument")
 					}
 					url := ctx.Args().Get(0)
 					if !isValidURL(url) {
-						return fmt.Errorf("Invalid URL (%s)", url)
+						return fmt.Errorf("invalid URL (%s)", url)
 					}
 					return addURLEntry(url)
 				},
@@ -113,7 +113,7 @@ func initApp() cli.App {
 				Action: func(ctx *cli.Context) error {
 					editor := ctx.String("editor")
 					if editor == "" {
-						return errors.New("Requires editor name")
+						return errors.New("requires editor name")
 					}
 					return execEditor(editor, urlFile)
 				},
@@ -125,7 +125,7 @@ func initApp() cli.App {
 func fetchFeed(url string) (*gofeed.Feed, error) {
 	feed, err := gofeed.NewParser().ParseURL(url)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to fetch or parse feed at %s: %w", url, err)
+		return nil, fmt.Errorf("failed to fetch or parse feed at %s: %w", url, err)
 	}
 	return feed, nil
 }
@@ -133,12 +133,12 @@ func fetchFeed(url string) (*gofeed.Feed, error) {
 func addURLEntry(url string) error {
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
-		return fmt.Errorf("Failed to open URL entry file (%s): %w", urlFile, err)
+		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	defer file.Close()
 	_, err = fmt.Fprintln(file, url)
 	if err != nil {
-		return fmt.Errorf("Writing failed to the URL entry file (%s): %w", urlFile, err)
+		return fmt.Errorf("writing failed to the URL entry file (%s): %w", urlFile, err)
 	}
 	return nil
 }
@@ -147,14 +147,14 @@ func readURLsFromEntry() ([]string, error) {
 	var urls []string
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to open URL entry file (%s): %w", urlFile, err)
+		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	s := bufio.NewScanner(file)
 	for s.Scan() {
 		urls = append(urls, s.Text())
 	}
 	if s.Err() != nil {
-		return nil, fmt.Errorf("Failed to scan from URL entry file (%s): %w", urlFile, err)
+		return nil, fmt.Errorf("failed to scan from URL entry file (%s): %w", urlFile, err)
 	}
 	return urls, nil
 }
@@ -186,7 +186,7 @@ func findItem(items []*gofeed.Item) ([]int, error) {
 
 func openURL(url string) error {
 	if err := webbrowser.Open(url); err != nil {
-		return fmt.Errorf("Failed to open the URL (%s): %w", url, err)
+		return fmt.Errorf("failed to open the URL (%s): %w", url, err)
 	}
 	return nil
 }
