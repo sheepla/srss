@@ -12,7 +12,7 @@
 
 <div align="center">
 
-A fast & simple command line RSS/ATOM/JSON feed reader
+A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired by [newsboat](https://github.com/newsboat/newsboat)
 
 ![Language:Go](https://img.shields.io/static/v1?label=Language&message=Go&color=blue&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
@@ -57,6 +57,7 @@ Use the `add` command to register the feed URL.
 
 The feeds URL is saved in a plain text file and you can edit it using the `edit` command.
 You can specify the command name of the editor in the argument of the `-e`, `--editor` option.
+If the environment variable `$EDITOR` is set, will use it.
 
 ```bash
 srss add https://zenn.dev/topics/go/feed
