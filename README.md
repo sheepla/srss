@@ -1,3 +1,9 @@
+<div align="right">
+
+![CI](https://github.com/sheepla/srss/actions/workflows/ci.yml/badge.svg)
+
+</div>
+
 <div align="center">
 
 # 📘 srss
@@ -7,6 +13,9 @@
 <div align="center">
 
 A fast & simple command line RSS/ATOM/JSON feed reader
+
+![Language:Go](https://img.shields.io/static/v1?label=Language&message=Go&color=blue&style=flat-square)
+![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
 
 *This repository is still under development!. Specifications are subject to change without notice.*
 
