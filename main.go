@@ -126,7 +126,7 @@ func initApp() *cli.App {
 			{
 				Name:    "tui",
 				Aliases: []string{"t"},
-				Usage:   "View feed items with built-in pager",
+				Usage:   "View items in the feed with built-in pager",
 				Action: func(ctx *cli.Context) error {
 					urls, err := readURLsFromEntry()
 					if err != nil {

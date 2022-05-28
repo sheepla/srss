@@ -37,18 +37,15 @@ NAME:
 USAGE:
    srss [global options] command [command options] [arguments...]
 
-VERSION:
-   unknown
-
 COMMANDS:
    open, o  Open feed URL on your browser
-   add, a   Add URL entry
+   add, a   Add url entry
    edit, e  Edit URL entry file
+   tui, t   View items in the feed with built-in pager
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h     show help (default: false)
-   --version, -v  print the version (default: false)
+   --help, -h  show help (default: false)
 ```
 
 ### Register or edit the feeds URL
@@ -64,13 +61,23 @@ srss add https://zenn.dev/topics/go/feed
 srss edit --editor nvim
 ```
 
-### View feed items on the terminal
+### View items in the feed on the terminal
 
-*TODO*
+Run the `tui`, `t` command then narrow down and select the items in the feed with a fuzzyfinder-like UI,
+you can browse the items with a `less` like pager UI.
 
-### Open links on feed items in the browser
+```
+srss tui
+```
 
-Use the `open`, `o` command to filter from feed items and open the URL of the selected item in your browser.
+### Open links on items in the feed in the browser
+
+Use the `open`, `o` command, you can open the link of the selected item in your browser.
+
+```
+srss open
+```
+
 ## Installation
 
 To build from source, clone this repository then run `go install`. 
