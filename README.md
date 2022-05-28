@@ -76,7 +76,7 @@ The key bindings in fuzzyfinder UI are follows:
 |-----------|----------------|
 |`C-k` `C-p`|Move focus up   |
 |`C-j` `C-n`|Move focus down |
-|`Enter`    |Move focus down |
+|`Enter`    |Select the item |
 |`q` `Esc`  |Quit fuzzyfinder|
 
 The key bindings in pager UI are follows:
@@ -92,6 +92,7 @@ The key bindings in pager UI are follows:
 ### Open links on items in the feed in the browser
 
 Use the `open`, `o` command, you can open the link of the selected item in your browser.
+You can select multiple items with `Tab` key.
 
 ```
 srss open
