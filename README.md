@@ -70,6 +70,25 @@ you can browse the items with a `less` like pager UI.
 srss tui
 ```
 
+The key bindings in fuzzyfinder UI are follows:
+
+|Key        |Description     |
+|-----------|----------------|
+|`C-k` `C-p`|Move focus up   |
+|`C-j` `C-n`|Move focus down |
+|`Enter`    |Move focus down |
+|`q` `Esc`  |Quit fuzzyfinder|
+
+The key bindings in pager UI are follows:
+
+|Key       |Description                        |
+|----------|-----------------------------------|
+|`k` `Up`  |Scroll up                          |
+|`j` `Down`|Scroll down                        |
+|`g` `Home`|Scroll on top                      |
+|`G` `End` |Scroll on bottom                   |
+|`q` `Esc` |Quit pager then back to fuzzyfinder|
+
 ### Open links on items in the feed in the browser
 
 Use the `open`, `o` command, you can open the link of the selected item in your browser.
