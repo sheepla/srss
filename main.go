@@ -197,7 +197,7 @@ func addURLEntry(url string) error {
 	}
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
-		return fmt.Errorf("failed to open URL entry 1file (%s): %w", urlFile, err)
+		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	defer file.Close()
 	_, err = fmt.Fprintln(file, url)
