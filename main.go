@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/kirsle/configdir"
@@ -24,7 +24,7 @@ var (
 	appUsage   = "A simple command line RSS feed reader"
 )
 
-var urlFile = path.Join(configdir.LocalConfig(), appName, "urls.txt")
+var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
 // var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
 
@@ -189,9 +189,15 @@ func isUniqueURL(url string) bool {
 }
 
 func addURLEntry(url string) error {
+	dir := filepath.Dir(urlFile)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		if err = os.MkdirAll(dir, 0o755); err != nil {
+			return fmt.Errorf("failed to create directory (%s): %w", dir, err)
+		}
+	}
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
-		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
+		return fmt.Errorf("failed to open URL entry 1file (%s): %w", urlFile, err)
 	}
 	defer file.Close()
 	_, err = fmt.Fprintln(file, url)
