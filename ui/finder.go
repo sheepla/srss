@@ -8,8 +8,31 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func FindItem(items []*gofeed.Item) ([]int, error) {
+func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
+		items,
+		func(i int) string {
+			return items[i].Title
+		},
+		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
+			if i == -1 {
+				return ""
+			}
+			s := fmt.Sprintf(
+				"■ %s\n\n  by %s\n  published at %s, updated at %s\n\n%s\n",
+				items[i].Title,
+				items[i].Author.Name,
+				items[i].Published,
+				items[i].Updated,
+				items[i].Description,
+			)
+			return runewidth.Wrap(s, width/2-5)
+		}),
+	)
+}
+
+func FindItem(items []*gofeed.Item) (int, error) {
+	return fuzzyfinder.Find(
 		items,
 		func(i int) string {
 			return items[i].Title

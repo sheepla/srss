@@ -71,7 +71,7 @@ func initApp() *cli.App {
 						items = append(items, feeds[i].Items...)
 					}
 
-					choises, err := ui.FindItem(items)
+					choises, err := ui.FindItemMulti(items)
 					if err != nil {
 						return err
 					}
@@ -120,6 +120,41 @@ func initApp() *cli.App {
 						return errors.New("requires editor name")
 					}
 					return execEditor(editor, urlFile)
+				},
+			},
+			{
+				Name:    "read",
+				Aliases: []string{"r"},
+				Usage:   "View feed items with built-in pager",
+				Action: func(ctx *cli.Context) error {
+					urls, err := readURLsFromEntry()
+					if err != nil {
+						return err
+					}
+					var feeds []gofeed.Feed
+					for _, v := range urls {
+						f, err := fetchFeed(v)
+						if err != nil {
+							return err
+						}
+						feeds = append(feeds, *f)
+					}
+
+					var items []*gofeed.Item
+					for i := 0; i < len(feeds); i++ {
+						items = append(items, feeds[i].Items...)
+					}
+
+					idx, err := ui.FindItem(items)
+					if err != nil {
+						return err
+					}
+					pager, err := ui.NewPager(items[idx])
+					if err != nil {
+						return err
+					}
+
+					return pager.Start()
 				},
 			},
 		},
