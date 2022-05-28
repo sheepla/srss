@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/kirsle/configdir"
-	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
+	"github.com/sheepla/srrs/ui"
 	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
 )
@@ -71,7 +71,7 @@ func initApp() *cli.App {
 						items = append(items, feeds[i].Items...)
 					}
 
-					choises, err := findItem(items)
+					choises, err := ui.FindItem(items)
 					if err != nil {
 						return err
 					}
@@ -178,26 +178,6 @@ func readURLsFromEntry() ([]string, error) {
 func isValidURL(u string) bool {
 	_, err := url.Parse(u)
 	return err == nil
-}
-
-func findItem(items []*gofeed.Item) ([]int, error) {
-	return fuzzyfinder.FindMulti(
-		items,
-		func(i int) string {
-			return items[i].Title
-		},
-		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
-			if i == -1 {
-				return ""
-			}
-			return fmt.Sprintf(
-				"%s\n\n%s\n\n%s\n",
-				items[i].Title,
-				items[i].Description,
-				items[i].Content,
-			)
-		}),
-	)
 }
 
 func openURL(url string) error {
