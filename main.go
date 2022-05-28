@@ -28,10 +28,6 @@ var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
 // var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
 
-func init() {
-	configdir.MakePath(filepath.Dir(urlFile))
-}
-
 func main() {
 	app := initApp()
 	if err := app.Run(os.Args); err != nil {
@@ -46,6 +42,9 @@ func initApp() *cli.App {
 		Usage:                appUsage,
 		Suggest:              false,
 		EnableBashCompletion: true,
+		Before: func(ctx *cli.Context) error {
+			return configdir.MakePath(filepath.Dir(urlFile))
+		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
 				return errors.New("must require arguments")
