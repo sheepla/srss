@@ -99,7 +99,11 @@ func initApp() *cli.App {
 					if !isValidURL(url) {
 						return fmt.Errorf("invalid URL (%s)", url)
 					}
-					if !isUniqueURL(url) {
+					urls, err := readURLsFromEntry()
+					if err != nil {
+						return fmt.Errorf("Failed to read from URL entry file: %w", err)
+					}
+					if !isUniqueURL(urls, url) {
 						return fmt.Errorf("the URL is already registered: %s", url)
 					}
 					return addURLEntry(url)
@@ -179,12 +183,9 @@ func fetchFeed(url string) (*gofeed.Feed, error) {
 	return feed, nil
 }
 
-func isUniqueURL(url string) bool {
-	file, _ := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
-	defer file.Close()
-	s := bufio.NewScanner(file)
-	for s.Scan() {
-		if strings.TrimSpace(s.Text()) == url {
+func isUniqueURL(urls []string, u string) bool {
+	for _, v := range urls {
+		if v == u {
 			return false
 		}
 	}
@@ -221,7 +222,7 @@ func readURLsFromEntry() ([]string, error) {
 }
 
 func isValidURL(u string) bool {
-	_, err := url.Parse(u)
+	_, err := url.ParseRequestURI(u)
 	return err == nil
 }
 
