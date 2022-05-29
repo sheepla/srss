@@ -66,7 +66,7 @@ func initApp() *cli.App {
 					}
 					urls, err := readURLsFromEntry()
 					if err != nil {
-						return fmt.Errorf("Failed to read from URL entry file: %w", err)
+						return fmt.Errorf("failed to read from URL entry file: %w", err)
 					}
 					if !isUniqueURL(urls, url) {
 						return fmt.Errorf("the URL is already registered: %s", url)
@@ -88,6 +88,9 @@ func initApp() *cli.App {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
+					if ctx.NArg() != 0 {
+						return fmt.Errorf("extra arguments (%s)", ctx.Args().Slice())
+					}
 					editor := strings.TrimSpace(ctx.String("editor"))
 					if editor == "" {
 						return errors.New("requires editor name")
