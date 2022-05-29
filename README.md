@@ -112,6 +112,10 @@ srss open
 
 ## Installation
 
+Executable binaries are available from the latest release page.
+
+> [![Latest Release](https://img.shields.io/github/v/release/sheepla/srss?style=flat-square)](https://github.com/sheepla/srss/releases/latest)
+
 To build from source, clone this repository then run `go install`. 
 Developing with Go `v1.18.2 linux/amd64`
 
