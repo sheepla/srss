@@ -38,10 +38,10 @@ USAGE:
    srss [global options] command [command options] [arguments...]
 
 COMMANDS:
-   open, o  Open feed URL on your browser
    add, a   Add url entry
    edit, e  Edit URL entry file
    tui, t   View items in the feed with built-in pager
+   open, o  Open feed URL on your browser
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -60,6 +60,16 @@ If the environment variable `$EDITOR` is set, will use it.
 srss add https://zenn.dev/topics/go/feed
 srss edit --editor nvim
 ```
+
+*NOTE*
+
+The location of the URL entry file depends on the OS. It is as follows:
+
+|OS     |Path                                                                        |
+|-------|----------------------------------------------------------------------------|
+|Windows|`%APPDATA%\srss\urls.txt` or `C:\Users\%USER%\AppData\Roaming\srss\urls.txt`|
+|Linux  |`$XDG_CONFIG_HOME/srss/urls.txt` or `$HOME/.config/srss/urls.txt`           |
+|macOS  |`$HOME/Library/Application Support/srss/urls.txt`                           |
 
 ### View items in the feed on the terminal
 
