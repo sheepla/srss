@@ -130,7 +130,7 @@ func initApp() *cli.App {
 						}
 						pager, err := ui.NewPager(items[idx])
 						if err != nil {
-							return fmt.Errorf("Failed to create pager: %w", err)
+							return fmt.Errorf("failed to create pager: %w", err)
 						}
 
 						if err := pager.Start(); err != nil {
@@ -212,7 +212,7 @@ func readURLsFromEntry() ([]string, error) {
 	var urls []string
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to open URL entry file (%s): %w", urlFile, err)
+		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	s := bufio.NewScanner(file)
 	for s.Scan() {
