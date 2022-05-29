@@ -1,6 +1,7 @@
 <div align="right">
 
 ![CI](https://github.com/sheepla/srss/actions/workflows/ci.yml/badge.svg)
+![Relase](https://github.com/sheepla/srss/actions/workflows/release.yml/badge.svg)
 
 </div>
 
@@ -16,6 +17,7 @@ A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired b
 
 ![Language:Go](https://img.shields.io/static/v1?label=Language&message=Go&color=blue&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
+[![Latest Release](https://img.shields.io/github/v/release/sheepla/srss?style=flat-square)](https://github.com/sheepla/srss/releases/latest)
 
 *This repository is still under development!. Specifications are subject to change without notice.*
 
