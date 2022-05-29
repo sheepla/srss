@@ -53,41 +53,6 @@ func initApp() *cli.App {
 		},
 		Commands: []*cli.Command{
 			{
-				Name:    "open",
-				Aliases: []string{"o"},
-				Usage:   "Open feed URL on your browser",
-				Action: func(ctx *cli.Context) error {
-					urls, err := readURLsFromEntry()
-					if err != nil {
-						return err
-					}
-					var feeds []gofeed.Feed
-					for _, v := range urls {
-						f, err := fetchFeed(v)
-						if err != nil {
-							return err
-						}
-						feeds = append(feeds, *f)
-					}
-
-					var items []*gofeed.Item
-					for i := 0; i < len(feeds); i++ {
-						items = append(items, feeds[i].Items...)
-					}
-
-					choises, err := ui.FindItemMulti(items)
-					if err != nil {
-						return err
-					}
-					for _, idx := range choises {
-						if err := openURL(items[idx].Link); err != nil {
-							return err
-						}
-					}
-					return nil
-				},
-			},
-			{
 				Name:    "add",
 				Aliases: []string{"a"},
 				Usage:   "Add url entry",
@@ -169,6 +134,41 @@ func initApp() *cli.App {
 							return fmt.Errorf("an error occured on pager: %w", err)
 						}
 					}
+				},
+			},
+			{
+				Name:    "open",
+				Aliases: []string{"o"},
+				Usage:   "Open feed URL on your browser",
+				Action: func(ctx *cli.Context) error {
+					urls, err := readURLsFromEntry()
+					if err != nil {
+						return err
+					}
+					var feeds []gofeed.Feed
+					for _, v := range urls {
+						f, err := fetchFeed(v)
+						if err != nil {
+							return err
+						}
+						feeds = append(feeds, *f)
+					}
+
+					var items []*gofeed.Item
+					for i := 0; i < len(feeds); i++ {
+						items = append(items, feeds[i].Items...)
+					}
+
+					choises, err := ui.FindItemMulti(items)
+					if err != nil {
+						return err
+					}
+					for _, idx := range choises {
+						if err := openURL(items[idx].Link); err != nil {
+							return err
+						}
+					}
+					return nil
 				},
 			},
 		},
