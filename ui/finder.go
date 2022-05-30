@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mattn/go-runewidth"
@@ -28,7 +29,7 @@ func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
 		items,
 		func(i int) string {
-			return items[i].Title
+			return fmt.Sprintf("%s [%s ago]", items[i].Title, CompTimeDiff(items[i].PublishedParsed))
 		},
 		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
 			if i == -1 {
@@ -43,7 +44,7 @@ func FindItem(items []*gofeed.Item) (int, error) {
 	return fuzzyfinder.Find(
 		items,
 		func(i int) string {
-			return items[i].Title
+			return fmt.Sprintf("%s [%s ago]", items[i].Title, CompTimeDiff(items[i].PublishedParsed))
 		},
 		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
 			if i == -1 {
@@ -52,4 +53,20 @@ func FindItem(items []*gofeed.Item) (int, error) {
 			return runewidth.Wrap(bodyFromItem(items[i]), width/2-5)
 		}),
 	)
+}
+
+func CompTimeDiff(t *time.Time) string {
+	now := time.Now()
+	diff := int(now.Sub(*t).Hours())
+
+	day := diff / 24
+	if day > 30 {
+		month := day / 30
+		return fmt.Sprintf("%dmon", month)
+	}
+	if day == 0 {
+		hours := diff % 24
+		return fmt.Sprintf("%dh", hours)
+	}
+	return fmt.Sprintf("%dd", day)
 }
