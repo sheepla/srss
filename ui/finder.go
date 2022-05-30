@@ -60,7 +60,7 @@ func CompTimeDiff(t *time.Time) string {
 	diff := int(now.Sub(*t).Hours())
 
 	day := diff / 24
-	if day > 30 {
+	if day >= 30 {
 		month := day / 30
 		return fmt.Sprintf("%dmon", month)
 	}
