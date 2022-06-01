@@ -29,7 +29,7 @@ func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
 		items,
 		func(i int) string {
-			return fmt.Sprintf("%s [%s ago]", items[i].Title, CompTimeDiff(items[i].PublishedParsed))
+			return fmt.Sprintf("%s [%s ago]", items[i].Title, humanizeTime(items[i].PublishedParsed))
 		},
 		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
 			if i == -1 {
@@ -44,7 +44,7 @@ func FindItem(items []*gofeed.Item) (int, error) {
 	return fuzzyfinder.Find(
 		items,
 		func(i int) string {
-			return fmt.Sprintf("%s [%s ago]", items[i].Title, CompTimeDiff(items[i].PublishedParsed))
+			return fmt.Sprintf("%s [%s ago]", items[i].Title, humanizeTime(items[i].PublishedParsed))
 		},
 		fuzzyfinder.WithPreviewWindow(func(i, width, height int) string {
 			if i == -1 {
@@ -55,7 +55,7 @@ func FindItem(items []*gofeed.Item) (int, error) {
 	)
 }
 
-func CompTimeDiff(t *time.Time) string {
+func humanizeTime(t *time.Time) string {
 	now := time.Now()
 	diff := int(now.Sub(*t).Hours())
 
