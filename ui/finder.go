@@ -12,7 +12,7 @@ import (
 func renderPreviewWindow(item *gofeed.Item) string {
 	var author string
 	if item.Author != nil {
-		author = fmt.Sprintf("  by %s\n", item.Author.Name)
+		author = item.Author.Name
 	}
 	var publishedAt string
 	if item.PublishedParsed != nil {
@@ -27,11 +27,11 @@ func renderPreviewWindow(item *gofeed.Item) string {
 		updatedAt = item.Updated
 	}
 	return fmt.Sprintf(
-		"■ %s\n\n%s  published at %s, updated at %s\n\n%s\n",
+		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
 		item.Title,
-		author,
-		publishedAt,
-		updatedAt,
+		sprintfIfNotBlank("by %s", author),
+		sprintfIfNotBlank("published at %s", publishedAt),
+		sprintfIfNotBlank("updated at %s", updatedAt),
 		item.Description,
 	)
 }
