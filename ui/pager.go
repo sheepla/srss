@@ -57,8 +57,8 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, viewport.Sync(m.viewport))
 		}
 	case tea.WindowSizeMsg:
-		headerHeight := lip.Height(m.headerView())
-		footerHeight := lip.Height(m.footerView())
+		headerHeight := lip.Height(m.renderHeader())
+		footerHeight := lip.Height(m.renderFooter())
 		verticalMarginHeight := headerHeight + footerHeight
 
 		if !m.ready {
@@ -87,16 +87,16 @@ func (m *model) View() string {
 	if !m.ready {
 		return "\n  Initializing..."
 	}
-	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.viewport.View(), m.footerView())
+	return fmt.Sprintf("%s\n%s\n%s", m.renderHeader(), m.viewport.View(), m.renderFooter())
 }
 
-func (m *model) headerView() string {
+func (m *model) renderHeader() string {
 	title := titleStyle.Render(m.title)
 	line := strings.Repeat("─", larger(0, m.viewport.Width-lip.Width(title)))
 	return lip.JoinHorizontal(lip.Center, title, line)
 }
 
-func (m *model) footerView() string {
+func (m *model) renderFooter() string {
 	info := infoStyle.Render(scrollPercent(m.viewport.ScrollPercent()))
 	line := strings.Repeat("─", larger(0, m.viewport.Width-lip.Width(info)))
 	return lip.JoinHorizontal(lip.Center, line, info)
