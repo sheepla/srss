@@ -40,6 +40,18 @@ func renderContent(item *gofeed.Item) string {
 	if item.Author != nil {
 		sprintfIfNotEmpty("by %s ", item.Author.Name)
 	}
+	var publishedAt string
+	if item.PublishedParsed != nil {
+		publishedAt = humanizeTime(item.PublishedParsed)
+	} else {
+		publishedAt = item.Published
+	}
+	var updatedAt string
+	if item.UpdatedParsed != nil {
+		updatedAt = humanizeTime(item.UpdatedParsed)
+	} else {
+		updatedAt = item.Updated
+	}
 	return fmt.Sprintf(
 		`%s%s %s
 ──────
@@ -49,8 +61,8 @@ func renderContent(item *gofeed.Item) string {
 %s
 `,
 		author,
-		sprintfIfNotEmpty("published at %s", item.Published),
-		sprintfIfNotEmpty("updated at %s", item.Updated),
+		sprintfIfNotEmpty("published at %s", publishedAt),
+		sprintfIfNotEmpty("updated at %s", updatedAt),
 		sprintfIfNotEmpty("%s", item.Description),
 		sprintfIfNotEmpty("%s", item.Content),
 		sprintfIfNotEmpty("%s", strings.Join(item.Links, "\n")),
