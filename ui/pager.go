@@ -97,12 +97,12 @@ func (m *model) headerView() string {
 }
 
 func (m *model) footerView() string {
-	info := infoStyle.Render(scrollPercentToString(m.viewport.ScrollPercent()))
+	info := infoStyle.Render(scrollPercent(m.viewport.ScrollPercent()))
 	line := strings.Repeat("─", larger(0, m.viewport.Width-lip.Width(info)))
 	return lip.JoinHorizontal(lip.Center, line, info)
 }
 
-func scrollPercentToString(p float64) string {
+func scrollPercent(p float64) string {
 	return fmt.Sprintf("%3.f%%", p*100)
 }
 
