@@ -124,32 +124,3 @@ func larger(a, b int) int {
 	}
 	return b
 }
-
-func renderContent(item *gofeed.Item) string {
-	var author string
-	if item.Author != nil {
-		sprintfIfNotEmpty("by %s ", item.Author.Name)
-	}
-	return fmt.Sprintf(
-		`%s%s %s
-──────
-%s
-%s
-──────
-%s
-`,
-		author,
-		sprintfIfNotEmpty("published at %s", item.Published),
-		sprintfIfNotEmpty("updated at %s", item.Updated),
-		sprintfIfNotEmpty("%s", item.Description),
-		sprintfIfNotEmpty("%s", item.Content),
-		sprintfIfNotEmpty("%s", strings.Join(item.Links, "\n")),
-	)
-}
-
-func sprintfIfNotEmpty(format string, str string) string {
-	if str == "" {
-		return ""
-	}
-	return fmt.Sprintf(format, str)
-}
