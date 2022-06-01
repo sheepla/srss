@@ -33,6 +33,18 @@ type model struct {
 	viewport viewport.Model
 }
 
+func NewPager(item *gofeed.Item) (*tea.Program, error) {
+	program := tea.NewProgram(
+		&model{
+			title:   item.Title,
+			content: renderContent(item),
+		},
+		tea.WithAltScreen(),
+		tea.WithMouseCellMotion(),
+	)
+	return program, nil
+}
+
 func (m *model) Init() tea.Cmd {
 	return nil
 }
@@ -113,24 +125,11 @@ func larger(a, b int) int {
 	return b
 }
 
-func NewPager(item *gofeed.Item) (*tea.Program, error) {
-	program := tea.NewProgram(
-		&model{
-			title:   item.Title,
-			content: renderContent(item),
-		},
-		tea.WithAltScreen(),
-		tea.WithMouseCellMotion(),
-	)
-	return program, nil
-}
-
 func renderContent(item *gofeed.Item) string {
 	var author string
 	if item.Author != nil {
 		sprintfIfNotEmpty("by %s ", item.Author.Name)
 	}
-
 	return fmt.Sprintf(
 		`%s%s %s
 ──────

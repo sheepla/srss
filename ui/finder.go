@@ -9,35 +9,8 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func renderPreviewWindow(item *gofeed.Item) string {
-	var author string
-	if item.Author != nil {
-		author = item.Author.Name
-	}
-	var publishedAt string
-	if item.PublishedParsed != nil {
-		publishedAt = humanizeTime(item.PublishedParsed)
-	} else {
-		publishedAt = item.Published
-	}
-	var updatedAt string
-	if item.UpdatedParsed != nil {
-		updatedAt = humanizeTime(item.UpdatedParsed)
-	} else {
-		updatedAt = item.Updated
-	}
-	return fmt.Sprintf(
-		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
-		item.Title,
-		sprintfIfNotEmpty("by %s", author),
-		sprintfIfNotEmpty("published at %s", publishedAt),
-		sprintfIfNotEmpty("updated at %s", updatedAt),
-		item.Description,
-	)
-}
-
-func FindItemMulti(items []*gofeed.Item) ([]int, error) {
-	return fuzzyfinder.FindMulti(
+func FindItem(items []*gofeed.Item) (int, error) {
+	return fuzzyfinder.Find(
 		items,
 		func(i int) string {
 			return fmt.Sprintf("%s [%s]", items[i].Title, humanizeTime(items[i].PublishedParsed))
@@ -51,8 +24,8 @@ func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 	)
 }
 
-func FindItem(items []*gofeed.Item) (int, error) {
-	return fuzzyfinder.Find(
+func FindItemMulti(items []*gofeed.Item) ([]int, error) {
+	return fuzzyfinder.FindMulti(
 		items,
 		func(i int) string {
 			return fmt.Sprintf("%s [%s]", items[i].Title, humanizeTime(items[i].PublishedParsed))
@@ -79,4 +52,31 @@ func humanizeTime(t *time.Time) string {
 		return fmt.Sprintf("%dh ago", hours)
 	}
 	return fmt.Sprintf("%dd ago", day)
+}
+
+func renderPreviewWindow(item *gofeed.Item) string {
+	var author string
+	if item.Author != nil {
+		author = item.Author.Name
+	}
+	var publishedAt string
+	if item.PublishedParsed != nil {
+		publishedAt = humanizeTime(item.PublishedParsed)
+	} else {
+		publishedAt = item.Published
+	}
+	var updatedAt string
+	if item.UpdatedParsed != nil {
+		updatedAt = humanizeTime(item.UpdatedParsed)
+	} else {
+		updatedAt = item.Updated
+	}
+	return fmt.Sprintf(
+		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
+		item.Title,
+		sprintfIfNotEmpty("by %s", author),
+		sprintfIfNotEmpty("published at %s", publishedAt),
+		sprintfIfNotEmpty("updated at %s", updatedAt),
+		item.Description,
+	)
 }
