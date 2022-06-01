@@ -214,6 +214,7 @@ func readURLsFromEntry() ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
+	defer file.Close()
 	s := bufio.NewScanner(file)
 	for s.Scan() {
 		urls = append(urls, s.Text())
