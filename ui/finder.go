@@ -29,9 +29,9 @@ func renderPreviewWindow(item *gofeed.Item) string {
 	return fmt.Sprintf(
 		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
 		item.Title,
-		sprintfIfNotBlank("by %s", author),
-		sprintfIfNotBlank("published at %s", publishedAt),
-		sprintfIfNotBlank("updated at %s", updatedAt),
+		sprintfIfNotEmpty("by %s", author),
+		sprintfIfNotEmpty("published at %s", publishedAt),
+		sprintfIfNotEmpty("updated at %s", updatedAt),
 		item.Description,
 	)
 }

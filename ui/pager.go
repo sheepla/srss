@@ -128,7 +128,7 @@ func NewPager(item *gofeed.Item) (*tea.Program, error) {
 func renderContent(item *gofeed.Item) string {
 	var author string
 	if item.Author != nil {
-		sprintfIfNotBlank("by %s ", item.Author.Name)
+		sprintfIfNotEmpty("by %s ", item.Author.Name)
 	}
 
 	return fmt.Sprintf(
@@ -140,15 +140,15 @@ func renderContent(item *gofeed.Item) string {
 %s
 `,
 		author,
-		sprintfIfNotBlank("published at %s", item.Published),
-		sprintfIfNotBlank("updated at %s", item.Updated),
-		sprintfIfNotBlank("%s", item.Description),
-		sprintfIfNotBlank("%s", item.Content),
-		sprintfIfNotBlank("%s", strings.Join(item.Links, "\n")),
+		sprintfIfNotEmpty("published at %s", item.Published),
+		sprintfIfNotEmpty("updated at %s", item.Updated),
+		sprintfIfNotEmpty("%s", item.Description),
+		sprintfIfNotEmpty("%s", item.Content),
+		sprintfIfNotEmpty("%s", strings.Join(item.Links, "\n")),
 	)
 }
 
-func sprintfIfNotBlank(format string, str string) string {
+func sprintfIfNotEmpty(format string, str string) string {
 	if str == "" {
 		return ""
 	}
