@@ -70,7 +70,7 @@ func renderContent(item *gofeed.Item) string {
 }
 
 func sprintfIfNotEmpty(format string, str string) string {
-	if str == "" {
+	if str == "" || format == "" {
 		return ""
 	}
 	return fmt.Sprintf(format, str)
