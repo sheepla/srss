@@ -2,10 +2,10 @@ package ui
 
 import (
 	"fmt"
-	"strings"
-	"time"
 	"github.com/gilliek/go-opml/opml"
 	"github.com/mmcdole/gofeed"
+	"strings"
+	"time"
 )
 
 func renderPreviewWindow(item *gofeed.Item) string {
@@ -100,14 +100,13 @@ func parseOPML(path string) (*opml.OPML, error) {
 }
 
 func extractFeedURL(items []opml.Outline) []string {
-  arr := make([]string, 0,0)
+	arr := make([]string, 0, 0)
 
 	for _, category := range items {
-    for _,feed := range category.Outlines{
-      arr = append(arr,feed.XMLURL)
-    }
+		for _, feed := range category.Outlines {
+			arr = append(arr, feed.XMLURL)
+		}
 	}
 
-  return arr
+	return arr
 }
-
