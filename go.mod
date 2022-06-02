@@ -19,6 +19,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.4.0 // indirect
+	github.com/gilliek/go-opml v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f // indirect
 	github.com/ktr0731/go-fuzzyfinder v0.6.0 // indirect
