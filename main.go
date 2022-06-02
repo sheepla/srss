@@ -174,6 +174,29 @@ func initApp() *cli.App {
 					return nil
 				},
 			},
+			{
+				Name:    "import",
+				Aliases: []string{"i"},
+				Usage:   "import Feed URL from OPML file",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "path",
+						Aliases: []string{"p"},
+						Usage:   "OPML file path",
+					},
+				},
+				Action: func(ctx *cli.Context) error {
+					if ctx.NArg() != 0 {
+						return fmt.Errorf("extra arguments (%s)", ctx.Args().Slice())
+					}
+					path := strings.TrimSpace(ctx.String("path"))
+					if path == "" {
+						return errors.New("requires file path")
+					}
+					//TODO: call OPML parser
+					return nil
+				},
+			},
 		},
 	}
 }
