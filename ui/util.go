@@ -9,22 +9,24 @@ import (
 )
 
 func renderPreviewWindow(item *gofeed.Item) string {
-	var author string
-	if item.Author != nil {
-		author = item.Author.Name
-	}
-	var publishedAt string
-	if item.PublishedParsed != nil {
-		publishedAt = humanizeTime(item.PublishedParsed)
-	} else {
-		publishedAt = item.Published
-	}
-	var updatedAt string
-	if item.UpdatedParsed != nil {
-		updatedAt = humanizeTime(item.UpdatedParsed)
-	} else {
-		updatedAt = item.Updated
-	}
+	author := func() string {
+		if item.Author != nil {
+			return item.Author.Name
+		}
+		return ""
+	}()
+	publishedAt := func() string {
+		if item.PublishedParsed != nil {
+			return humanizeTime(item.PublishedParsed)
+		}
+		return item.Published
+	}()
+	updatedAt := func() string {
+		if item.UpdatedParsed != nil {
+			return humanizeTime(item.UpdatedParsed)
+		}
+		return item.Updated
+	}()
 	return fmt.Sprintf(
 		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
 		item.Title,
@@ -36,22 +38,24 @@ func renderPreviewWindow(item *gofeed.Item) string {
 }
 
 func renderContent(item *gofeed.Item) string {
-	var author string
-	if item.Author != nil {
-		sprintfIfNotEmpty("by %s ", item.Author.Name)
-	}
-	var publishedAt string
-	if item.PublishedParsed != nil {
-		publishedAt = humanizeTime(item.PublishedParsed)
-	} else {
-		publishedAt = item.Published
-	}
-	var updatedAt string
-	if item.UpdatedParsed != nil {
-		updatedAt = humanizeTime(item.UpdatedParsed)
-	} else {
-		updatedAt = item.Updated
-	}
+	author := func() string {
+		if item.Author != nil {
+			return item.Author.Name
+		}
+		return ""
+	}()
+	publishedAt := func() string {
+		if item.PublishedParsed != nil {
+			return humanizeTime(item.PublishedParsed)
+		}
+		return item.Published
+	}()
+	updatedAt := func() string {
+		if item.UpdatedParsed != nil {
+			return humanizeTime(item.UpdatedParsed)
+		}
+		return item.Updated
+	}()
 	return fmt.Sprintf(
 		`%s%s %s
 ──────
