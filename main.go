@@ -195,11 +195,14 @@ func initApp() *cli.App {
 					}
 					outlines, err := ui.ParseOPML(path)
 					if err != nil {
-						return fmt.Errorf("%s", err)
+						return err
 					}
 					urls := ui.ExtractFeedURL(outlines.Outlines())
 					for _, url := range urls {
-						addURLEntry(url)
+						err := addURLEntry(url)
+						if err != nil {
+							return err
+						}
 					}
 					return nil
 				},
