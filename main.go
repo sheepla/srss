@@ -24,6 +24,19 @@ var (
 	appUsage   = "A simple command line RSS feed reader"
 )
 
+type exitCode int
+
+const (
+	exitCodeOK exitCode = iota
+	exitCodeErrArgs
+	exitCodeErrFetchFeeds
+	exitCodeErrUrlEntry
+	exitCodeErrFuzzyFinder
+	exitCodeErrPager
+	exitCodeErrEditor
+	exitCodeErrBrowser
+)
+
 var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
 // var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
@@ -47,7 +60,7 @@ func initApp() *cli.App {
 		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
-				return errors.New("must require arguments")
+				return cli.Exit("must require arguments", int(exitCodeErrArgs))
 			}
 			return nil
 		},
@@ -58,20 +71,38 @@ func initApp() *cli.App {
 				Usage:   "Add url entry",
 				Action: func(ctx *cli.Context) error {
 					if ctx.NArg() != 1 {
-						return errors.New("requires URL as an argument")
+						return cli.Exit(
+							"requires URL as an argument",
+							int(exitCodeErrArgs),
+						)
 					}
 					url := ctx.Args().Get(0)
 					if !isValidURL(url) {
-						return fmt.Errorf("invalid URL (%s)", url)
+						return cli.Exit(
+							fmt.Sprintf("invalid URL (%s)", url),
+							int(exitCodeErrUrlEntry),
+						)
 					}
 					urls, err := readURLsFromEntry()
 					if err != nil {
-						return fmt.Errorf("failed to read from URL entry file: %w", err)
+						return cli.Exit(
+							fmt.Sprintf("failed to read URL entry file (%s)", url),
+							int(exitCodeErrUrlEntry),
+						)
 					}
 					if !isUniqueURL(urls, url) {
-						return fmt.Errorf("the URL is already registered: %s", url)
+						return cli.Exit(
+							fmt.Sprintf("the URL is already registered (%s)", url),
+							int(exitCodeErrUrlEntry),
+						)
 					}
-					return addURLEntry(url)
+					if err := addURLEntry(url); err != nil {
+						return cli.Exit(
+							fmt.Sprintf("failed to add URL entry (%s): %s", url, err),
+							int(exitCodeErrUrlEntry),
+						)
+					}
+					return nil
 				},
 			},
 			{
@@ -89,13 +120,26 @@ func initApp() *cli.App {
 				},
 				Action: func(ctx *cli.Context) error {
 					if ctx.NArg() != 0 {
-						return fmt.Errorf("extra arguments (%s)", ctx.Args().Slice())
+						return cli.Exit(
+							fmt.Sprintf("extra arguments (%s)", ctx.Args().Slice()),
+							int(exitCodeErrArgs),
+						)
 					}
 					editor := strings.TrimSpace(ctx.String("editor"))
 					if editor == "" {
-						return errors.New("requires editor name")
+						return cli.Exit(
+							"requires editor command name",
+							int(exitCodeErrArgs),
+						)
 					}
-					return execEditor(editor, urlFile)
+					err := execEditor(editor, urlFile)
+					if err != nil {
+						return cli.Exit(
+							fmt.Sprintf("failed to launch editor: %s", err),
+							int(exitCodeErrEditor),
+						)
+					}
+					return nil
 				},
 			},
 			{
@@ -125,17 +169,31 @@ func initApp() *cli.App {
 						idx, err := ui.FindItem(items)
 						if err != nil {
 							if errors.Is(fuzzyfinder.ErrAbort, err) {
-								return errors.New("quit")
+								return cli.Exit(
+									"quit",
+									int(exitCodeOK),
+								)
+							} else {
+								return cli.Exit(
+									fmt.Sprintf("an error occured on fuzzyfinder: %s", err),
+									int(exitCodeErrFuzzyFinder),
+								)
 							}
 						}
 						pager, err := ui.NewPager(items[idx])
 						if err != nil {
-							return fmt.Errorf("failed to create pager: %w", err)
+							return cli.Exit(
+								fmt.Sprintf("failed to init pager: %s", err),
+								int(exitCodeErrPager),
+							)
 						}
-
 						if err := pager.Start(); err != nil {
-							return fmt.Errorf("an error occured on pager: %w", err)
+							return cli.Exit(
+								fmt.Sprintf("an error occured on pager: %s", err),
+								int(exitCodeErrPager),
+							)
 						}
+						return nil
 					}
 				},
 			},
@@ -152,7 +210,10 @@ func initApp() *cli.App {
 					for _, v := range urls {
 						f, err := fetchFeed(v)
 						if err != nil {
-							return err
+							return cli.Exit(
+								fmt.Sprintf("failed to fetch feeds: %s", err),
+								int(exitCodeErrFetchFeeds),
+							)
 						}
 						feeds = append(feeds, *f)
 					}
@@ -164,11 +225,17 @@ func initApp() *cli.App {
 
 					choises, err := ui.FindItemMulti(items)
 					if err != nil {
-						return err
+						return cli.Exit(
+							fmt.Sprintf("an error occured on fuzzyfinder: %s", err),
+							int(exitCodeErrFuzzyFinder),
+						)
 					}
 					for _, idx := range choises {
 						if err := openURL(items[idx].Link); err != nil {
-							return err
+							return cli.Exit(
+								fmt.Sprintf("failed to open URL in browser: %s", err),
+								int(exitCodeErrBrowser),
+							)
 						}
 					}
 					return nil
