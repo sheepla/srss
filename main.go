@@ -50,7 +50,7 @@ func main() {
 	}
 }
 
-// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct
+// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx
 func initApp() *cli.App {
 	return &cli.App{
 		Name:                 appName,
@@ -204,6 +204,8 @@ func initApp() *cli.App {
 								int(exitCodeErrPager),
 							)
 						}
+
+						// nolint:staticcheck
 						return cli.Exit("", int(exitCodeOK))
 					}
 				},
@@ -249,6 +251,7 @@ func initApp() *cli.App {
 							)
 						}
 					}
+
 					return cli.Exit("", int(exitCodeOK))
 				},
 			},
@@ -312,6 +315,7 @@ func readURLsFromEntry() ([]string, error) {
 
 func isValidURL(u string) bool {
 	_, err := url.ParseRequestURI(u)
+
 	return err == nil
 }
 
