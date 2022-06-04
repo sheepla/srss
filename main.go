@@ -306,6 +306,7 @@ func readURLsFromEntry() ([]string, error) {
 	if s.Err() != nil {
 		return nil, fmt.Errorf("failed to scan from URL entry file (%s): %w", urlFile, err)
 	}
+
 	return urls, nil
 }
 

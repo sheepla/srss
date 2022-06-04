@@ -8,6 +8,9 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
+const padding = 5
+
+// nolint:wrapcheck
 func FindItem(items []*gofeed.Item) (int, error) {
 	return fuzzyfinder.Find(
 		items,
@@ -18,11 +21,13 @@ func FindItem(items []*gofeed.Item) (int, error) {
 			if i == -1 {
 				return ""
 			}
-			return runewidth.Wrap(renderPreviewWindow(items[i]), width/2-5)
+
+			return runewidth.Wrap(renderPreviewWindow(items[i]), width/2-padding)
 		}),
 	)
 }
 
+// nolint:wrapcheck
 func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 	return fuzzyfinder.FindMulti(
 		items,
@@ -33,7 +38,8 @@ func FindItemMulti(items []*gofeed.Item) ([]int, error) {
 			if i == -1 {
 				return ""
 			}
-			return runewidth.Wrap(renderPreviewWindow(items[i]), width/2-5)
+
+			return runewidth.Wrap(renderPreviewWindow(items[i]), width/2-padding)
 		}),
 	)
 }

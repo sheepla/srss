@@ -13,20 +13,24 @@ func renderPreviewWindow(item *gofeed.Item) string {
 		if item.Author != nil {
 			return item.Author.Name
 		}
+
 		return ""
 	}()
 	publishedAt := func() string {
 		if item.PublishedParsed != nil {
 			return humanizeTime(item.PublishedParsed)
 		}
+
 		return item.Published
 	}()
 	updatedAt := func() string {
 		if item.UpdatedParsed != nil {
 			return humanizeTime(item.UpdatedParsed)
 		}
+
 		return item.Updated
 	}()
+
 	return fmt.Sprintf(
 		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
 		item.Title,
@@ -42,20 +46,24 @@ func renderContent(item *gofeed.Item) string {
 		if item.Author != nil {
 			return item.Author.Name
 		}
+
 		return ""
 	}()
 	publishedAt := func() string {
 		if item.PublishedParsed != nil {
 			return humanizeTime(item.PublishedParsed)
 		}
+
 		return item.Published
 	}()
 	updatedAt := func() string {
 		if item.UpdatedParsed != nil {
 			return humanizeTime(item.UpdatedParsed)
 		}
+
 		return item.Updated
 	}()
+
 	return fmt.Sprintf(
 		`%s%s %s
 ──────
