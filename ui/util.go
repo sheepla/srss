@@ -100,7 +100,7 @@ func ParseOPML(path string) (*opml.OPML, error) {
 }
 
 func ExtractFeedURL(items []opml.Outline) []string {
-	arr := make([]string, 0, 0)
+	arr := make([]string, 0)
 
 	for _, category := range items {
 		for _, feed := range category.Outlines {
