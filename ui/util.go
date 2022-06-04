@@ -85,20 +85,27 @@ func sprintfIfNotEmpty(format string, str string) string {
 	if str == "" || format == "" {
 		return ""
 	}
+
 	return fmt.Sprintf(format, str)
 }
 
+// nolint:gomnd
 func humanizeTime(t *time.Time) string {
 	now := time.Now()
 	diff := int(now.Sub(*t).Hours())
 	day := diff / 24
+
 	if day >= 30 {
 		month := day / 30
+
 		return fmt.Sprintf("%dmon ago", month)
 	}
+
 	if day == 0 {
 		hours := diff % 24
+
 		return fmt.Sprintf("%dh ago", hours)
 	}
+
 	return fmt.Sprintf("%dd ago", day)
 }
