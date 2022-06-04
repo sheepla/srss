@@ -92,7 +92,7 @@ func initApp() *cli.App {
 							int(exitCodeErrURLEntry),
 						)
 					}
-					urls, err := readURLsFromEntry()
+					urls, err := readURLEntry()
 					if err != nil {
 						return cli.Exit(
 							fmt.Sprintf("failed to read URL entry file (%s)", url),
@@ -158,7 +158,7 @@ func initApp() *cli.App {
 				Aliases: []string{"t"},
 				Usage:   "View items in the feed with built-in pager",
 				Action: func(ctx *cli.Context) error {
-					urls, err := readURLsFromEntry()
+					urls, err := readURLEntry()
 					if err != nil {
 						return err
 					}
@@ -215,7 +215,7 @@ func initApp() *cli.App {
 				Aliases: []string{"o"},
 				Usage:   "Open feed URL on your browser",
 				Action: func(ctx *cli.Context) error {
-					urls, err := readURLsFromEntry()
+					urls, err := readURLEntry()
 					if err != nil {
 						return err
 					}
@@ -294,7 +294,7 @@ func addURLEntry(url string) error {
 }
 
 // nolint:wsl
-func readURLsFromEntry() ([]string, error) {
+func readURLEntry() ([]string, error) {
 	var urls []string
 	// nolint:gomnd
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
