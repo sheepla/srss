@@ -204,9 +204,6 @@ func initApp() *cli.App {
 								int(exitCodeErrPager),
 							)
 						}
-
-						// nolint:staticcheck
-						return cli.Exit("", int(exitCodeOK))
 					}
 				},
 			},
