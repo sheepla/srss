@@ -90,6 +90,7 @@ func initApp() *cli.App {
 						return cli.Exit(
 							fmt.Sprintf("invalid URL (%s)", url),
 							int(exitCodeErrURLEntry),
+
 						)
 					}
 					urls, err := readURLsFromEntry()
