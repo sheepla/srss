@@ -193,7 +193,14 @@ func initApp() *cli.App {
 					if path == "" {
 						return errors.New("requires file path")
 					}
-					//TODO: call OPML parser
+					outlines, err := ui.ParseOPML(path)
+					if err != nil {
+						return fmt.Errorf("%s", err)
+					}
+					urls := ui.ExtractFeedURL(outlines.Outlines())
+					for _, url := range urls {
+						addURLEntry(url)
+					}
 					return nil
 				},
 			},
