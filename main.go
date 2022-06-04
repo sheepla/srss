@@ -18,6 +18,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// nolint:gochecknoglobals
 var (
 	appName    = "srss"
 	appVersion = "unknown"
@@ -30,13 +31,14 @@ const (
 	exitCodeOK exitCode = iota
 	exitCodeErrArgs
 	exitCodeErrFetchFeeds
-	exitCodeErrUrlEntry
+	exitCodeErrURLEntry
 	exitCodeErrFuzzyFinder
 	exitCodeErrPager
 	exitCodeErrEditor
 	exitCodeErrBrowser
 )
 
+// nolint:gochecknoglobals
 var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
 // var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
@@ -48,20 +50,27 @@ func main() {
 	}
 }
 
+// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct
 func initApp() *cli.App {
 	return &cli.App{
 		Name:                 appName,
+		HelpName:             appName,
 		Version:              appVersion,
 		Usage:                appUsage,
 		Suggest:              false,
 		EnableBashCompletion: true,
 		Before: func(ctx *cli.Context) error {
-			return configdir.MakePath(filepath.Dir(urlFile))
+			if err := configdir.MakePath(filepath.Dir(urlFile)); err != nil {
+				return fmt.Errorf("failed to create URL entry file: %w", err)
+			}
+
+			return nil
 		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
 				return cli.Exit("must require arguments", int(exitCodeErrArgs))
 			}
+
 			return nil
 		},
 		Commands: []*cli.Command{
@@ -80,29 +89,30 @@ func initApp() *cli.App {
 					if !isValidURL(url) {
 						return cli.Exit(
 							fmt.Sprintf("invalid URL (%s)", url),
-							int(exitCodeErrUrlEntry),
+							int(exitCodeErrURLEntry),
 						)
 					}
 					urls, err := readURLsFromEntry()
 					if err != nil {
 						return cli.Exit(
 							fmt.Sprintf("failed to read URL entry file (%s)", url),
-							int(exitCodeErrUrlEntry),
+							int(exitCodeErrURLEntry),
 						)
 					}
 					if !isUniqueURL(urls, url) {
 						return cli.Exit(
 							fmt.Sprintf("the URL is already registered (%s)", url),
-							int(exitCodeErrUrlEntry),
+							int(exitCodeErrURLEntry),
 						)
 					}
 					if err := addURLEntry(url); err != nil {
 						return cli.Exit(
 							fmt.Sprintf("failed to add URL entry (%s): %s", url, err),
-							int(exitCodeErrUrlEntry),
+							int(exitCodeErrURLEntry),
 						)
 					}
-					return nil
+
+					return cli.Exit("", int(exitCodeOK))
 				},
 			},
 			{
@@ -139,7 +149,8 @@ func initApp() *cli.App {
 							int(exitCodeErrEditor),
 						)
 					}
-					return nil
+
+					return cli.Exit("", int(exitCodeOK))
 				},
 			},
 			{
@@ -173,12 +184,12 @@ func initApp() *cli.App {
 									"quit",
 									int(exitCodeOK),
 								)
-							} else {
-								return cli.Exit(
-									fmt.Sprintf("an error occured on fuzzyfinder: %s", err),
-									int(exitCodeErrFuzzyFinder),
-								)
 							}
+
+							return cli.Exit(
+								fmt.Sprintf("an error occurred on fuzzyfinder: %s", err),
+								int(exitCodeErrFuzzyFinder),
+							)
 						}
 						pager, err := ui.NewPager(items[idx])
 						if err != nil {
@@ -189,11 +200,11 @@ func initApp() *cli.App {
 						}
 						if err := pager.Start(); err != nil {
 							return cli.Exit(
-								fmt.Sprintf("an error occured on pager: %s", err),
+								fmt.Sprintf("an error occurred on pager: %s", err),
 								int(exitCodeErrPager),
 							)
 						}
-						return nil
+						return cli.Exit("", int(exitCodeOK))
 					}
 				},
 			},
@@ -208,14 +219,14 @@ func initApp() *cli.App {
 					}
 					var feeds []gofeed.Feed
 					for _, v := range urls {
-						f, err := fetchFeed(v)
+						feed, err := fetchFeed(v)
 						if err != nil {
 							return cli.Exit(
 								fmt.Sprintf("failed to fetch feeds: %s", err),
 								int(exitCodeErrFetchFeeds),
 							)
 						}
-						feeds = append(feeds, *f)
+						feeds = append(feeds, *feed)
 					}
 
 					var items []*gofeed.Item
@@ -226,7 +237,7 @@ func initApp() *cli.App {
 					choises, err := ui.FindItemMulti(items)
 					if err != nil {
 						return cli.Exit(
-							fmt.Sprintf("an error occured on fuzzyfinder: %s", err),
+							fmt.Sprintf("an error occurred on fuzzyfinder: %s", err),
 							int(exitCodeErrFuzzyFinder),
 						)
 					}
@@ -238,7 +249,7 @@ func initApp() *cli.App {
 							)
 						}
 					}
-					return nil
+					return cli.Exit("", int(exitCodeOK))
 				},
 			},
 		},
@@ -250,6 +261,7 @@ func fetchFeed(url string) (*gofeed.Feed, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch or parse feed at %s: %w", url, err)
 	}
+
 	return feed, nil
 }
 
@@ -259,24 +271,29 @@ func isUniqueURL(urls []string, u string) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
+// nolint:wsl
 func addURLEntry(url string) error {
+	// nolint:gomnd
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
 		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	defer file.Close()
-	_, err = fmt.Fprintln(file, url)
 	if err != nil {
 		return fmt.Errorf("writing failed to the URL entry file (%s): %w", urlFile, err)
 	}
+
 	return nil
 }
 
+// nolint:wsl
 func readURLsFromEntry() ([]string, error) {
 	var urls []string
+	// nolint:gomnd
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
@@ -301,13 +318,19 @@ func openURL(url string) error {
 	if err := webbrowser.Open(url); err != nil {
 		return fmt.Errorf("failed to open the URL (%s): %w", url, err)
 	}
+
 	return nil
 }
 
+// nolint:wsl
 // https://doloopwhile.hatenablog.com/entry/2014/08/05/213819
 func execEditor(editor string, args ...string) error {
 	cmd := exec.Command(editor, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to run editor (%s) %w", editor, err)
+	}
+
+	return nil
 }
