@@ -28,6 +28,7 @@ lint:
 
 .PHONY: test
 test:
+	mkdir -p .test
 	go test -coverprofile=$(COVERAGE_OUT) ./...
 
 .PHONY: coverage
