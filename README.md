@@ -120,7 +120,7 @@ srss open
 Use the `import`, `i` command, you can import a file in [OPML](https://en.wikipedia.org/wiki/OPML) format and register feeds URL.
 
 ```
-srss import --path path/to/opml.xml
+srss import --path path/to/file.opml
 ```
 
 ## Installation
