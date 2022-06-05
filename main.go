@@ -95,10 +95,7 @@ func initApp() *cli.App {
 					}
 					urls, err := readURLEntry()
 					if err != nil {
-						return cli.Exit(
-							fmt.Sprintf("failed to read URL entry file (%s)", url),
-							int(exitCodeErrURLEntry),
-						)
+						urls = []string{}
 					}
 					if !isUniqueURL(urls, url) {
 						return cli.Exit(
