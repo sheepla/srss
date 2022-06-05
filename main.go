@@ -329,6 +329,7 @@ func addURLEntry(url string) error {
 		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
 	}
 	defer file.Close()
+	_, err = fmt.Fprintln(file, url)
 	if err != nil {
 		return fmt.Errorf("writing failed to the URL entry file (%s): %w", urlFile, err)
 	}
