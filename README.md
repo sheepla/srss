@@ -39,15 +39,20 @@ NAME:
 USAGE:
    srss [global options] command [command options] [arguments...]
 
+VERSION:
+   0.0.3-alpha
+
 COMMANDS:
-   add, a   Add url entry
-   edit, e  Edit URL entry file
-   tui, t   View items in the feed with built-in pager
-   open, o  Open feed URL on your browser
-   help, h  Shows a list of commands or help for one command
+   add, a     Add url entry
+   edit, e    Edit URL entry file
+   tui, t     View items in the feed with built-in pager
+   open, o    Open feed URL on your browser
+   import, i  import Feed URL from OPML file
+   help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h  show help (default: false)
+   --help, -h     show help (default: false)
+   --version, -v  print the version (default: false)
 ```
 
 ### Register or edit the feeds URL
@@ -108,6 +113,14 @@ You can select multiple items with `Tab` key.
 
 ```
 srss open
+```
+
+### Import feeds URL from OPML file
+
+Use the `import`, `i` command, you can import a file in [OPML](https://en.wikipedia.org/wiki/OPML) format and register feeds URL.
+
+```
+srss import --path path/to/opml.xml
 ```
 
 ## Installation
