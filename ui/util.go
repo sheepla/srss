@@ -2,10 +2,11 @@ package ui
 
 import (
 	"fmt"
-	"github.com/gilliek/go-opml/opml"
-	"github.com/mmcdole/gofeed"
 	"strings"
 	"time"
+
+	"github.com/gilliek/go-opml/opml"
+	"github.com/mmcdole/gofeed"
 )
 
 func renderPreviewWindow(item *gofeed.Item) string {
@@ -113,8 +114,9 @@ func humanizeTime(t *time.Time) string {
 func ParseOPML(path string) (*opml.OPML, error) {
 	doc, err := opml.NewOPMLFromFile(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse OPML file: %w", err)
 	}
+
 	return doc, nil
 }
 

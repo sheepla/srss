@@ -34,6 +34,7 @@ const (
 	exitCodeErrURLEntry
 	exitCodeErrFuzzyFinder
 	exitCodeErrPager
+	exitCodeErrOPML
 	exitCodeErrEditor
 	exitCodeErrBrowser
 )
@@ -50,7 +51,7 @@ func main() {
 	}
 }
 
-// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx
+// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx,gocyclo
 func initApp() *cli.App {
 	return &cli.App{
 		Name:                 appName,
@@ -265,24 +266,36 @@ func initApp() *cli.App {
 				},
 				Action: func(ctx *cli.Context) error {
 					if ctx.NArg() != 0 {
-						return fmt.Errorf("extra arguments (%s)", ctx.Args().Slice())
+						return cli.Exit(
+							fmt.Sprintf("extra arguments (%s)", ctx.Args().Slice()),
+							int(exitCodeErrArgs),
+						)
 					}
 					path := strings.TrimSpace(ctx.String("path"))
 					if path == "" {
-						return errors.New("requires file path")
+						return cli.Exit(
+							"requires OPML file path",
+							int(exitCodeErrArgs),
+						)
 					}
 					outlines, err := ui.ParseOPML(path)
 					if err != nil {
-						return err
+						return cli.Exit(
+							fmt.Sprintf("failed to parse OPML file (%s) %s", path, err),
+							int(exitCodeErrOPML),
+						)
 					}
 					urls := ui.ExtractFeedURL(outlines.Outlines())
 					for _, url := range urls {
-						err := addURLEntry(url)
-						if err != nil {
-							return err
+						if err := addURLEntry(url); err != nil {
+							return cli.Exit(
+								fmt.Sprintf("failed to regester the URL entry (%s): %s", url, err),
+								int(exitCodeErrURLEntry),
+							)
 						}
 					}
-					return nil
+
+					return cli.Exit("", int(exitCodeOK))
 				},
 			},
 		},
