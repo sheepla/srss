@@ -27,6 +27,7 @@ A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired b
 
 - Fast, efficient, and easy-to-use interface for CLI lovers
 - Supports multiple feed format: RSS, Atom and JSON
+- You can import a file in OPML format and register URL entries
 
 ## Usage
 
