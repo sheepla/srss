@@ -13,6 +13,7 @@ import (
 	"github.com/kirsle/configdir"
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
+	"github.com/sheepla/srss/opml"
 	"github.com/sheepla/srss/ui"
 	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
@@ -275,14 +276,14 @@ func initApp() *cli.App {
 							int(exitCodeErrArgs),
 						)
 					}
-					outlines, err := ui.ParseOPML(path)
+					outlines, err := opml.ParseOPML(path)
 					if err != nil {
 						return cli.Exit(
 							fmt.Sprintf("failed to parse OPML file (%s) %s", path, err),
 							int(exitCodeErrOPML),
 						)
 					}
-					urls := ui.ExtractFeedURL(outlines.Outlines())
+					urls := opml.ExtractFeedURL(outlines.Outlines())
 					for _, url := range urls {
 						if err := addURLEntry(url); err != nil {
 							return cli.Exit(
