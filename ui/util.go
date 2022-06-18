@@ -1,11 +1,13 @@
 package ui
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/mmcdole/gofeed"
+	"golang.org/x/net/html"
 )
 
 func renderPreviewWindow(item *gofeed.Item) string {
@@ -30,6 +32,14 @@ func renderPreviewWindow(item *gofeed.Item) string {
 
 		return item.Updated
 	}()
+	description := func() string {
+		content, err := renderHTML(item.Description)
+		if err != nil {
+			return item.Description
+		}
+
+		return content
+	}()
 
 	return fmt.Sprintf(
 		"■ %s\n\n  %s\n\n  %s %s\n\n%s\n",
@@ -37,7 +47,7 @@ func renderPreviewWindow(item *gofeed.Item) string {
 		sprintfIfNotEmpty("by %s", author),
 		sprintfIfNotEmpty("published at %s", publishedAt),
 		sprintfIfNotEmpty("updated at %s", updatedAt),
-		item.Description,
+		description,
 	)
 }
 
@@ -63,6 +73,22 @@ func renderContent(item *gofeed.Item) string {
 
 		return item.Updated
 	}()
+	content := func() string {
+		c, err := renderHTML(item.Content)
+		if err != nil {
+			return item.Content
+		}
+
+		return c
+	}()
+	description := func() string {
+		c, err := renderHTML(item.Description)
+		if err != nil {
+			return item.Content
+		}
+
+		return c
+	}()
 
 	return fmt.Sprintf(
 		`%s%s %s
@@ -75,8 +101,8 @@ func renderContent(item *gofeed.Item) string {
 		author,
 		sprintfIfNotEmpty("published at %s", publishedAt),
 		sprintfIfNotEmpty("updated at %s", updatedAt),
-		sprintfIfNotEmpty("%s", item.Description),
-		sprintfIfNotEmpty("%s", item.Content),
+		sprintfIfNotEmpty("%s", description),
+		sprintfIfNotEmpty("%s", content),
 		sprintfIfNotEmpty("%s", strings.Join(item.Links, "\n")),
 	)
 }
@@ -108,4 +134,27 @@ func humanizeTime(t *time.Time) string {
 	}
 
 	return fmt.Sprintf("%dd ago", day)
+}
+
+func renderHTML(content string) (string, error) {
+	doc, err := html.Parse(strings.NewReader(content))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse content as HTML: %w", err)
+	}
+
+	var buf bytes.Buffer
+
+	removeHTMLTags(doc, &buf)
+
+	return buf.String(), nil
+}
+
+func removeHTMLTags(node *html.Node, buf *bytes.Buffer) {
+	if node.Type == html.TextNode {
+		buf.WriteString(node.Data)
+	}
+
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		removeHTMLTags(child, buf)
+	}
 }
