@@ -19,7 +19,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// nolint:gochecknoglobals
+//nolint:gochecknoglobals
 var (
 	appName    = "srss"
 	appVersion = "unknown"
@@ -40,7 +40,7 @@ const (
 	exitCodeErrBrowser
 )
 
-// nolint:gochecknoglobals
+//nolint:gochecknoglobals
 var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
 func main() {
@@ -50,7 +50,7 @@ func main() {
 	}
 }
 
-// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx,gocyclo
+//nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx,gocyclo
 func initApp() *cli.App {
 	return &cli.App{
 		Name:                 appName,
@@ -317,9 +317,9 @@ func isUniqueURL(urls []string, u string) bool {
 	return true
 }
 
-// nolint:wsl
+//nolint:wsl
 func addURLEntry(url string) error {
-	// nolint:gomnd
+	//nolint:gomnd,nosnakecase
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
 		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
@@ -333,10 +333,10 @@ func addURLEntry(url string) error {
 	return nil
 }
 
-// nolint:wsl
+//nolint:wsl
 func readURLEntry() ([]string, error) {
 	var urls []string
-	// nolint:gomnd
+	//nolint:gomnd,nosnakecase
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
@@ -367,12 +367,12 @@ func openURL(url string) error {
 	return nil
 }
 
-// nolint:wsl
 // https://doloopwhile.hatenablog.com/entry/2014/08/05/213819
 func execEditor(editor string, args ...string) error {
 	cmd := exec.Command(editor, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
+
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to run editor (%s) %w", editor, err)
 	}
