@@ -24,7 +24,7 @@ func Export(items []*gofeed.Item) (err error) {
 		return fmt.Errorf("failed to create cache parent directory(%s): %w", cacheDir, err)
 	}
 
-	file, err := open(cacheFile)
+	file, err := openfileWrite(cacheFile)
 	if err != nil {
 		return fmt.Errorf("failed to open the cache file(%s): %w", cacheFile, err)
 	}
@@ -53,7 +53,7 @@ func Import() (items []*gofeed.Item, err error) {
 		return nil, fmt.Errorf("failed to create cache parent directory(%s): %w", cacheDir, err)
 	}
 
-	file, err := open(cacheFile)
+	file, err := openfileRead(cacheFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the cache file(%s): %w", cacheFile, err)
 	}
@@ -93,17 +93,19 @@ func mkdir(path string) error {
 	return nil
 }
 
-func open(path string) (*os.File, error) {
-	if !exists(path) {
-		file, err := os.Create(path)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create the file(%s): %w", path, err)
-		}
-
-		return file, nil
+func openfileRead(path string) (*os.File, error) {
+	//nolint:gomnd,nosnakecase
+	file, err := os.OpenFile(path, os.O_RDONLY|os.O_CREATE, 0o666)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open the file(%s): %w", path, err)
 	}
 
-	file, err := os.Open(path)
+	return file, nil
+}
+
+func openfileWrite(path string) (*os.File, error) {
+	//nolint:gomnd,nosnakecase
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open the file(%s): %w", path, err)
 	}

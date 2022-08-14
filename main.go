@@ -274,8 +274,8 @@ func initApp() *cli.App {
 				},
 			},
 			{
-				Name:    "sync",
-				Aliases: []string{"s"},
+				Name:    "update",
+				Aliases: []string{"u"},
 				Usage:   "fetch the latest feeds and update the cache",
 				Action: func(ctx *cli.Context) error {
 					if ctx.NArg() != 0 {
@@ -289,17 +289,27 @@ func initApp() *cli.App {
 					if err != nil {
 						return err
 					}
+
+					if len(urls) == 0 {
+						return cli.Exit(
+							"URL entry not registered",
+							int(exitCodeErrURLEntry),
+						)
+					}
+
 					var feeds []gofeed.Feed
-					for _, v := range urls {
-						//nolint:forbidigo
-						fmt.Printf("Fetching the feed: %s\n", v)
-						feed, err := fetchFeed(v)
+					for _, url := range urls {
+						feed, err := fetchFeed(url)
 						if err != nil {
 							return cli.Exit(
 								fmt.Sprintf("failed to fetch the feeds: %s", err),
 								int(exitCodeErrFetchFeeds),
 							)
 						}
+
+						//nolint:forbidigo
+						fmt.Printf("Fetched the feed: %s\n", url)
+
 						feeds = append(feeds, *feed)
 					}
 
