@@ -32,7 +32,9 @@ A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired b
 ## Demo
 
 <div align="center">
-  <video src="https://user-images.githubusercontent.com/62412884/170834853-97a373f0-98cf-47db-81fe-26e4b0f14ef2.mp4">   
+
+![demo](https://user-images.githubusercontent.com/62412884/184543394-b79df2de-e8ef-4812-a767-7b3a7d26e746.gif)
+
 </div>
 
 ## Usage
