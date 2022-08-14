@@ -1,21 +1,17 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"net/url"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"strings"
 
-	"github.com/kirsle/configdir"
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
 	"github.com/sheepla/srss/cache"
 	"github.com/sheepla/srss/opml"
 	"github.com/sheepla/srss/ui"
+	"github.com/sheepla/srss/urlentry"
 	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
 )
@@ -42,9 +38,6 @@ const (
 	exitCodeErrCache
 )
 
-//nolint:gochecknoglobals
-var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
-
 func main() {
 	app := initApp()
 	if err := app.Run(os.Args); err != nil {
@@ -62,10 +55,6 @@ func initApp() *cli.App {
 		Suggest:              false,
 		EnableBashCompletion: true,
 		Before: func(ctx *cli.Context) error {
-			if err := configdir.MakePath(filepath.Dir(urlFile)); err != nil {
-				return fmt.Errorf("failed to create URL entry file: %w", err)
-			}
-
 			return nil
 		},
 		Action: func(ctx *cli.Context) error {
@@ -87,26 +76,18 @@ func initApp() *cli.App {
 							int(exitCodeErrArgs),
 						)
 					}
-					url := ctx.Args().Get(0)
-					if !isValidURL(url) {
+
+					url := strings.TrimSpace(ctx.Args().Get(0))
+					if !urlentry.IsUniqueURL(url) {
 						return cli.Exit(
-							fmt.Sprintf("invalid URL (%s)", url),
+							fmt.Sprintf("the URL(%s) has already registered", url),
 							int(exitCodeErrURLEntry),
 						)
 					}
-					urls, err := readURLEntry()
-					if err != nil {
-						urls = []string{}
-					}
-					if !isUniqueURL(urls, url) {
+
+					if err := urlentry.Add(url); err != nil {
 						return cli.Exit(
-							fmt.Sprintf("the URL is already registered (%s)", url),
-							int(exitCodeErrURLEntry),
-						)
-					}
-					if err := addURLEntry(url); err != nil {
-						return cli.Exit(
-							fmt.Sprintf("failed to add URL entry (%s): %s", url, err),
+							fmt.Sprintf("failed to add URL(%s) to entry file: %s", url, err),
 							int(exitCodeErrURLEntry),
 						)
 					}
@@ -134,6 +115,7 @@ func initApp() *cli.App {
 							int(exitCodeErrArgs),
 						)
 					}
+
 					editor := strings.TrimSpace(ctx.String("editor"))
 					if editor == "" {
 						return cli.Exit(
@@ -141,8 +123,8 @@ func initApp() *cli.App {
 							int(exitCodeErrArgs),
 						)
 					}
-					err := execEditor(editor, urlFile)
-					if err != nil {
+
+					if err := urlentry.OpenEditor(editor); err != nil {
 						return cli.Exit(
 							fmt.Sprintf("failed to launch editor: %s", err),
 							int(exitCodeErrEditor),
@@ -262,7 +244,7 @@ func initApp() *cli.App {
 					}
 					urls := opml.ExtractFeedURL(outlines.Outlines())
 					for _, url := range urls {
-						if err := addURLEntry(url); err != nil {
+						if err := urlentry.Add(url); err != nil {
 							return cli.Exit(
 								fmt.Sprintf("failed to regester the URL entry (%s): %s", url, err),
 								int(exitCodeErrURLEntry),
@@ -285,9 +267,12 @@ func initApp() *cli.App {
 						)
 					}
 
-					urls, err := readURLEntry()
+					urls, err := urlentry.Load()
 					if err != nil {
-						return err
+						return cli.Exit(
+							fmt.Sprintf("failed to load URL entry: %s", err),
+							int(exitCodeErrURLEntry),
+						)
 					}
 
 					if len(urls) == 0 {
@@ -338,74 +323,9 @@ func fetchFeed(url string) (*gofeed.Feed, error) {
 	return feed, nil
 }
 
-func isUniqueURL(urls []string, u string) bool {
-	for _, v := range urls {
-		if v == u {
-			return false
-		}
-	}
-
-	return true
-}
-
-//nolint:wsl
-func addURLEntry(url string) error {
-	//nolint:gomnd,nosnakecase
-	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
-	if err != nil {
-		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
-	}
-	defer file.Close()
-	_, err = fmt.Fprintln(file, url)
-	if err != nil {
-		return fmt.Errorf("writing failed to the URL entry file (%s): %w", urlFile, err)
-	}
-
-	return nil
-}
-
-//nolint:wsl
-func readURLEntry() ([]string, error) {
-	var urls []string
-	//nolint:gomnd,nosnakecase
-	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
-	}
-	defer file.Close()
-	s := bufio.NewScanner(file)
-	for s.Scan() {
-		urls = append(urls, s.Text())
-	}
-	if s.Err() != nil {
-		return nil, fmt.Errorf("failed to scan from URL entry file (%s): %w", urlFile, err)
-	}
-
-	return urls, nil
-}
-
-func isValidURL(u string) bool {
-	_, err := url.ParseRequestURI(u)
-
-	return err == nil
-}
-
 func openURL(url string) error {
 	if err := webbrowser.Open(url); err != nil {
 		return fmt.Errorf("failed to open the URL (%s): %w", url, err)
-	}
-
-	return nil
-}
-
-// https://doloopwhile.hatenablog.com/entry/2014/08/05/213819
-func execEditor(editor string, args ...string) error {
-	cmd := exec.Command(editor, args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to run editor (%s) %w", editor, err)
 	}
 
 	return nil
