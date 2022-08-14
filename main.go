@@ -13,13 +13,14 @@ import (
 	"github.com/kirsle/configdir"
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/mmcdole/gofeed"
+	"github.com/sheepla/srss/cache"
 	"github.com/sheepla/srss/opml"
 	"github.com/sheepla/srss/ui"
 	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
 )
 
-// nolint:gochecknoglobals
+//nolint:gochecknoglobals
 var (
 	appName    = "srss"
 	appVersion = "unknown"
@@ -38,12 +39,11 @@ const (
 	exitCodeErrOPML
 	exitCodeErrEditor
 	exitCodeErrBrowser
+	exitCodeErrCache
 )
 
-// nolint:gochecknoglobals
+//nolint:gochecknoglobals
 var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
-
-// var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
 
 func main() {
 	app := initApp()
@@ -52,7 +52,7 @@ func main() {
 	}
 }
 
-// nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx,gocyclo
+//nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx,gocyclo
 func initApp() *cli.App {
 	return &cli.App{
 		Name:                 appName,
@@ -157,22 +157,12 @@ func initApp() *cli.App {
 				Aliases: []string{"t"},
 				Usage:   "View items in the feed with built-in pager",
 				Action: func(ctx *cli.Context) error {
-					urls, err := readURLEntry()
+					items, err := cache.Import()
 					if err != nil {
-						return err
-					}
-					var feeds []gofeed.Feed
-					for _, v := range urls {
-						f, err := fetchFeed(v)
-						if err != nil {
-							return err
-						}
-						feeds = append(feeds, *f)
-					}
-
-					var items []*gofeed.Item
-					for i := 0; i < len(feeds); i++ {
-						items = append(items, feeds[i].Items...)
+						return cli.Exit(
+							fmt.Sprintf("failed to load cache: %s", err),
+							int(exitCodeErrCache),
+						)
 					}
 
 					for {
@@ -211,25 +201,12 @@ func initApp() *cli.App {
 				Aliases: []string{"o"},
 				Usage:   "Open feed URL on your browser",
 				Action: func(ctx *cli.Context) error {
-					urls, err := readURLEntry()
+					items, err := cache.Import()
 					if err != nil {
-						return err
-					}
-					var feeds []gofeed.Feed
-					for _, v := range urls {
-						feed, err := fetchFeed(v)
-						if err != nil {
-							return cli.Exit(
-								fmt.Sprintf("failed to fetch feeds: %s", err),
-								int(exitCodeErrFetchFeeds),
-							)
-						}
-						feeds = append(feeds, *feed)
-					}
-
-					var items []*gofeed.Item
-					for i := 0; i < len(feeds); i++ {
-						items = append(items, feeds[i].Items...)
+						return cli.Exit(
+							fmt.Sprintf("failed to load cache: %s", err),
+							int(exitCodeErrCache),
+						)
 					}
 
 					choises, err := ui.FindItemMulti(items)
@@ -296,6 +273,58 @@ func initApp() *cli.App {
 					return cli.Exit("", int(exitCodeOK))
 				},
 			},
+			{
+				Name:    "update",
+				Aliases: []string{"u"},
+				Usage:   "fetch the latest feeds and update the cache",
+				Action: func(ctx *cli.Context) error {
+					if ctx.NArg() != 0 {
+						return cli.Exit(
+							fmt.Sprintf("extra arguments (%s)", ctx.Args().Slice()),
+							int(exitCodeErrArgs),
+						)
+					}
+
+					urls, err := readURLEntry()
+					if err != nil {
+						return err
+					}
+
+					if len(urls) == 0 {
+						return cli.Exit(
+							"URL entry not registered",
+							int(exitCodeErrURLEntry),
+						)
+					}
+
+					var feeds []gofeed.Feed
+					for _, url := range urls {
+						feed, err := fetchFeed(url)
+						if err != nil {
+							return cli.Exit(
+								fmt.Sprintf("failed to fetch the feeds: %s", err),
+								int(exitCodeErrFetchFeeds),
+							)
+						}
+
+						//nolint:forbidigo
+						fmt.Printf("Fetched the feed: %s\n", url)
+
+						feeds = append(feeds, *feed)
+					}
+
+					var items []*gofeed.Item
+					for i := 0; i < len(feeds); i++ {
+						items = append(items, feeds[i].Items...)
+					}
+
+					if err := cache.Export(items); err != nil {
+						return fmt.Errorf("failed save the cache: %w", err)
+					}
+
+					return nil
+				},
+			},
 		},
 	}
 }
@@ -319,9 +348,9 @@ func isUniqueURL(urls []string, u string) bool {
 	return true
 }
 
-// nolint:wsl
+//nolint:wsl
 func addURLEntry(url string) error {
-	// nolint:gomnd
+	//nolint:gomnd,nosnakecase
 	file, err := os.OpenFile(urlFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o666)
 	if err != nil {
 		return fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
@@ -335,10 +364,10 @@ func addURLEntry(url string) error {
 	return nil
 }
 
-// nolint:wsl
+//nolint:wsl
 func readURLEntry() ([]string, error) {
 	var urls []string
-	// nolint:gomnd
+	//nolint:gomnd,nosnakecase
 	file, err := os.OpenFile(urlFile, os.O_RDONLY, 0o666)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open URL entry file (%s): %w", urlFile, err)
@@ -369,12 +398,12 @@ func openURL(url string) error {
 	return nil
 }
 
-// nolint:wsl
 // https://doloopwhile.hatenablog.com/entry/2014/08/05/213819
 func execEditor(editor string, args ...string) error {
 	cmd := exec.Command(editor, args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
+
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to run editor (%s) %w", editor, err)
 	}
