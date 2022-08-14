@@ -231,7 +231,7 @@ func initApp() *cli.App {
 			{
 				Name:    "import",
 				Aliases: []string{"i"},
-				Usage:   "import Feed URL from OPML file",
+				Usage:   "Import Feed URL from OPML file",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
 						Name:    "path",
@@ -276,7 +276,7 @@ func initApp() *cli.App {
 			{
 				Name:    "update",
 				Aliases: []string{"u"},
-				Usage:   "fetch the latest feeds and update the cache",
+				Usage:   "Fetch the latest feeds and update the cache",
 				Action: func(ctx *cli.Context) error {
 					if ctx.NArg() != 0 {
 						return cli.Exit(

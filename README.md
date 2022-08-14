@@ -54,7 +54,8 @@ COMMANDS:
    edit, e    Edit URL entry file
    tui, t     View items in the feed with built-in pager
    open, o    Open feed URL on your browser
-   import, i  import Feed URL from OPML file
+   import, i  Import Feed URL from OPML file
+   update, u  Fetch the latest feeds and update the cache
    help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
@@ -85,6 +86,25 @@ The location of the URL entry file depends on the OS. It is as follows:
 |Linux  |`$XDG_CONFIG_HOME/srss/urls.txt` or `$HOME/.config/srss/urls.txt`           |
 |macOS  |`$HOME/Library/Application Support/srss/urls.txt`                           |
 
+### Fetch the feeds and update cache
+
+Run the `update`, `u` command before view the feeds.
+The feed is fetched from the URL described in the URL entry file and the cache is updated.
+
+```
+srss update
+```
+
+*NOTE*
+
+The location of the URL entry file depends on the OS. It is as follows:
+
+|OS     |Path                                                                            |
+|-------|--------------------------------------------------------------------------------|
+|Windows|`%LOCALAPPDATA%\srss\cache.gob`or `C:\Users\%USER%\AppData\Local\srss\cache.gob`|
+|Linux  |`$XDG_CACHE_HOME/srss/cache.gob`or `$HOME/.cache/cache.gob`                     |
+|macOS  |`$HOME/Library/Caches/srss/cache.gob`                                           |
+  
 ### View items in the feed on the terminal
 
 Run the `tui`, `t` command then narrow down and select the items in the feed with a fuzzyfinder-like UI,
