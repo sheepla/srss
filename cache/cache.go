@@ -19,7 +19,7 @@ var (
 	cacheFile = filepath.Join(cacheDir, "cache.gob")
 )
 
-func Export(items *[]gofeed.Item) (err error) {
+func Export(items []*gofeed.Item) (err error) {
 	if err := mkdir(cacheDir); err != nil {
 		return fmt.Errorf("failed to create cache parent directory(%s): %w", cacheDir, err)
 	}
@@ -38,7 +38,7 @@ func Export(items *[]gofeed.Item) (err error) {
 	buf := new(bytes.Buffer)
 	enc := gob.NewEncoder(buf)
 
-	if err = enc.Encode(*items); err != nil {
+	if err = enc.Encode(&items); err != nil {
 		return fmt.Errorf("failed to encode cache data: %w", err)
 	}
 
@@ -48,7 +48,7 @@ func Export(items *[]gofeed.Item) (err error) {
 }
 
 //nolint:nonamedreturns
-func Import() (items *[]gofeed.Item, err error) {
+func Import() (items []*gofeed.Item, err error) {
 	if err := mkdir(cacheDir); err != nil {
 		return nil, fmt.Errorf("failed to create cache parent directory(%s): %w", cacheDir, err)
 	}

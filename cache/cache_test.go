@@ -12,7 +12,7 @@ import (
 
 //nolint:paralleltest
 func TestExport(t *testing.T) {
-	items := []gofeed.Item{
+	items := []*gofeed.Item{
 		{
 			Title:       "TITLE1",
 			Description: "DESCRIPTION1",
@@ -30,7 +30,7 @@ func TestExport(t *testing.T) {
 		},
 	}
 
-	if err := cache.Export(&items); err != nil {
+	if err := cache.Export(items); err != nil {
 		t.Errorf("an error occurred on `Export()`: %s", err)
 	}
 }
