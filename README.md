@@ -99,7 +99,7 @@ srss update
 
 *NOTE*
 
-The location of the URL entry file depends on the OS. It is as follows:
+The location of the cache file depends on the OS. It is as follows:
 
 |OS     |Path                                                                            |
 |-------|--------------------------------------------------------------------------------|
