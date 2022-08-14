@@ -43,8 +43,6 @@ const (
 // nolint:gochecknoglobals
 var urlFile = filepath.Join(configdir.LocalConfig(), appName, "urls.txt")
 
-// var cacheDBFile = path.Join(configdir.LocalCache(), appName, "cache.db")
-
 func main() {
 	app := initApp()
 	if err := app.Run(os.Args); err != nil {
