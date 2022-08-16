@@ -12,7 +12,6 @@ import (
 	"github.com/sheepla/srss/opml"
 	"github.com/sheepla/srss/ui"
 	"github.com/sheepla/srss/urlentry"
-	"github.com/toqueteos/webbrowser"
 	"github.com/urfave/cli/v2"
 )
 
@@ -233,7 +232,7 @@ func runOpenCommand(ctx *cli.Context) error {
 	}
 
 	for _, idx := range choises {
-		if err := openURL(items[idx].Link); err != nil {
+		if err := ui.OpenURL(items[idx].Link); err != nil {
 			return cli.Exit(
 				fmt.Sprintf("failed to open URL in browser: %s", err),
 				int(exitCodeErrBrowser),
@@ -343,12 +342,4 @@ func fetchFeed(url string) (*gofeed.Feed, error) {
 	}
 
 	return feed, nil
-}
-
-func openURL(url string) error {
-	if err := webbrowser.Open(url); err != nil {
-		return fmt.Errorf("failed to open the URL (%s): %w", url, err)
-	}
-
-	return nil
 }
