@@ -13,7 +13,7 @@
 
 <div align="center">
 
-A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired by [newsboat](https://github.com/newsboat/newsboat)
+Simple-RSS - A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired by [newsboat](https://github.com/newsboat/newsboat)
 
 ![Language:Go](https://img.shields.io/static/v1?label=Language&message=Go&color=blue&style=flat-square)
 ![License:MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=blue&style=flat-square)
