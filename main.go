@@ -45,7 +45,7 @@ func main() {
 	}
 }
 
-//nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx,gocyclo
+//nolint:funlen,gocognit,cyclop,exhaustruct,exhaustivestruct,maintidx
 func initApp() *cli.App {
 	return &cli.App{
 		Name:                 appName,
