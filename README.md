@@ -104,7 +104,7 @@ The location of the cache file depends on the OS. It is as follows:
 |OS     |Path                                                                            |
 |-------|--------------------------------------------------------------------------------|
 |Windows|`%LOCALAPPDATA%\srss\cache.gob`or `C:\Users\%USER%\AppData\Local\srss\cache.gob`|
-|Linux  |`$XDG_CACHE_HOME/srss/cache.gob`or `$HOME/.cache/cache.gob`                     |
+|Linux  |`$XDG_CACHE_HOME/srss/cache.gob`or `$HOME/.cache/srss/cache.gob`                |
 |macOS  |`$HOME/Library/Caches/srss/cache.gob`                                           |
   
 ### View items in the feed on the terminal
