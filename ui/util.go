@@ -115,7 +115,7 @@ func sprintfIfNotEmpty(format string, str string) string {
 	return fmt.Sprintf(format, str)
 }
 
-// nolint:gomnd
+//nolint:gomnd
 func humanizeTime(t *time.Time) string {
 	now := time.Now()
 	diff := int(now.Sub(*t).Hours())
@@ -149,6 +149,7 @@ func renderHTML(content string) (string, error) {
 	return buf.String(), nil
 }
 
+//nolint:interfacer
 func removeHTMLTags(node *html.Node, buf *bytes.Buffer) {
 	if node.Type == html.TextNode {
 		buf.WriteString(node.Data)
