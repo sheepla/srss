@@ -115,8 +115,12 @@ func sprintfIfNotEmpty(format string, str string) string {
 	return fmt.Sprintf(format, str)
 }
 
-//nolint:gomnd
+//nolint:gomnd,varnamelen
 func humanizeTime(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+
 	now := time.Now()
 	diff := int(now.Sub(*t).Hours())
 	day := diff / 24
