@@ -11,6 +11,23 @@
 
 </div>
 
+
+<div align="center">
+
+```
+   ─────────────┐   ┌────────────────────────────────┐
+                │   │                                │
+   ─────────┐   │   │ ┌─────  ─┬──── ┌─────  ┌─────  │
+            │   │   │ │        │     │       │       │
+   ─────┐   │   │   │ └─────┐  │     └─────┐ └─────┐ │
+        │   │   │   │       │  │           │       │ │
+┌───┐   │   │   │   │  ─────┘ ─┴─     ─────┘  ─────┘ │
+│   │   │   │   │   │                                │
+└───┘               └────────────────────────────────┘
+```
+
+</div>
+
 <div align="center">
 
 Simple-RSS - A fast & simple command line RSS/ATOM/JSON feed reader written in Go, inspired by [newsboat](https://github.com/newsboat/newsboat)

@@ -37,6 +37,18 @@ const (
 	exitCodeErrCache
 )
 
+const asciiArt = `
+   ─────────────┐   ┌────────────────────────────────┐
+                │   │                                │
+   ─────────┐   │   │ ┌─────  ─┬──── ┌─────  ┌─────  │
+            │   │   │ │        │     │       │       │
+   ─────┐   │   │   │ └─────┐  │     └─────┐ └─────┐ │
+        │   │   │   │       │  │           │       │ │
+┌───┐   │   │   │   │  ─────┘ ─┴─     ─────┘  ─────┘ │
+│   │   │   │   │   │                                │
+└───┘               └────────────────────────────────┘
+`
+
 func main() {
 	app := initApp()
 	if err := app.Run(os.Args); err != nil {
@@ -58,6 +70,9 @@ func initApp() *cli.App {
 		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.NArg() == 0 {
+				//nolint:forbidigo
+				fmt.Print(asciiArt)
+
 				return cli.Exit("must require arguments", int(exitCodeErrArgs))
 			}
 
