@@ -47,6 +47,7 @@ const asciiArt = `
 ┌───┐   │   │   │   │  ─────┘ ─┴─     ─────┘  ─────┘ │
 │   │   │   │   │   │                                │
 └───┘               └────────────────────────────────┘
+    -- A command line RSS/ATOM/JSON feed reader --    
 `
 
 func main() {
