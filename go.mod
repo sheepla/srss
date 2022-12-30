@@ -13,16 +13,15 @@ require (
 	github.com/mmcdole/gofeed v1.1.3
 	github.com/pkg/errors v0.9.1
 	github.com/toqueteos/webbrowser v1.2.0
-	github.com/urfave/cli/v2 v2.7.1
+	github.com/urfave/cli/v2 v2.23.7
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 )
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/andybalholm/cascadia v1.1.0 // indirect
-	github.com/antzucaro/matchr v0.0.0-20210222213004-b04723ef80f0 // indirect
 	github.com/containerd/console v1.0.2 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.4.0 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
@@ -37,6 +36,7 @@ require (
 	github.com/nsf/termbox-go v0.0.0-20201124104050-ed494de23a00 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/term v0.0.0-20210422114643-f5beecf764ed // indirect
 	golang.org/x/text v0.3.7 // indirect
