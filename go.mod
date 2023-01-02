@@ -9,7 +9,7 @@ require (
 	github.com/gilliek/go-opml v1.0.0
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
 	github.com/ktr0731/go-fuzzyfinder v0.6.0
-	github.com/mattn/go-runewidth v0.0.13
+	github.com/mattn/go-runewidth v0.0.14
 	github.com/mmcdole/gofeed v1.1.3
 	github.com/pkg/errors v0.9.1
 	github.com/toqueteos/webbrowser v1.2.0
