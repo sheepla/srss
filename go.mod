@@ -13,7 +13,7 @@ require (
 	github.com/mmcdole/gofeed v1.1.3
 	github.com/pkg/errors v0.9.1
 	github.com/toqueteos/webbrowser v1.2.0
-	github.com/urfave/cli/v2 v2.23.7
+	github.com/urfave/cli/v2 v2.24.3
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 )
 
